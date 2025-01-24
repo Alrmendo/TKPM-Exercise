@@ -1,25 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Sinh Viên</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-
-<body class="bg-gray-100 min-h-screen">
+<body class="w-screen h-screen bg-gray-100">
     <header class="bg-blue-600 text-white py-4 shadow-md">
-        <div class="container mx-auto px-4">
+        <div class="w-[95%] mx-auto px-4">
             <h1 class="text-2xl font-bold">Quản Lý Danh Sách Sinh Viên</h1>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-6">
+    <main class="w-[95%] mx-auto px-1 py-6">
         <!-- Form thêm sinh viên -->
         <section class="bg-white p-6 rounded shadow-md mb-6">
-            <h2 class="text-xl font-bold mb-4">Thêm Sinh Viên Mới</h2>
-            <form id="add-student-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <h2 class="text-lg font-bold mb-4">Thêm Sinh Viên Mới</h2>
+            <form id="add-student-form" class="grid grid-cols-1 text-[15px] md:grid-cols-2 gap-4">
                 <div>
                     <label for="student-id" class="block font-medium">Mã số sinh viên</label>
                     <input type="text" id="student-id" class="w-full border border-gray-300 rounded px-3 py-2" required>
@@ -93,14 +83,14 @@
 
         <!-- Tìm kiếm sinh viên -->
         <section class="bg-white p-6 rounded shadow-md mb-6">
-            <h2 class="text-xl font-bold mb-4">Tìm Kiếm Sinh Viên</h2>
+            <h2 class="text-lg font-bold mb-4">Tìm Kiếm Sinh Viên</h2>
             <input type="text" id="search-input" class="w-full border border-gray-300 rounded px-3 py-2 mb-4"
                 placeholder="Nhập MSSV hoặc Họ Tên...">
         </section>
 
         <!-- Danh sách sinh viên -->
         <section class="bg-white p-6 rounded shadow-md">
-            <h2 class="text-xl font-bold mb-4">Danh Sách Sinh Viên</h2>
+            <h2 class="text-lg font-bold mb-4">Danh Sách Sinh Viên</h2>
             <div id="student-list" class="overflow-x-auto">
                 <table class="min-w-full border border-gray-300 text-left text-[15px]">
                     <thead class="bg-gray-100">
@@ -129,7 +119,7 @@
     </main>
 
     <!-- chỉnh sửa sinh viên -->
-    <div id="edit-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+    <div id="edit-modal" class="flex hidden fixed inset-0 bg-gray-800 bg-opacity-50 items-center justify-center">
         <div class="bg-white rounded shadow-lg p-6 w-full max-w-4xl">
             <h3 class="text-xl font-bold mb-4">Chỉnh sửa thông tin sinh viên</h3>
             <form id="edit-student-form" class="grid grid-cols-2 gap-4">
@@ -272,18 +262,18 @@
             const newRow = document.createElement('tr');
 
             newRow.innerHTML = `
-                <td class="text-sm border px-3 py-2">${student.id}</td>
-                <td class="text-sm border px-3 py-2">${student.name}</td>
-                <td class="text-sm border px-3 py-2">${student.birthdate}</td>
-                <td class="text-sm border px-3 py-2">${student.gender}</td>
-                <td class="text-sm border px-3 py-2">${student.department}</td>
-                <td class="text-sm border px-3 py-2">${student.status}</td>
-                <td class="text-sm border px-3 py-2">${student.email}</td>
-                <td class="text-sm border px-3 py-2">${student.phone}</td>
-                <td class="text-sm border px-3 py-2">${student.course}</td>
-                <td class="text-sm border px-3 py-2">${student.program}</td>
-                <td class="text-sm border px-3 py-2">${student.address}</td>
-                <td class="text-sm border px-3 py-2 text-center" style="width: 120px;">
+                <td class="text-[13px] border px-3 py-2">${student.id}</td>
+                <td class="text-[13px] border px-3 py-2">${student.name}</td>
+                <td class="text-[13px] border px-3 py-2">${student.birthdate}</td>
+                <td class="text-[13px] border px-3 py-2">${student.gender}</td>
+                <td class="text-[13px] border px-3 py-2">${student.department}</td>
+                <td class="text-[13px] border px-3 py-2">${student.status}</td>
+                <td class="text-[13px] border px-3 py-2">${student.email}</td>
+                <td class="text-[13px] border px-3 py-2">${student.phone}</td>
+                <td class="text-[13px] border px-3 py-2">${student.course}</td>
+                <td class="text-[13px] border px-3 py-2">${student.program}</td>
+                <td class="text-[13px] border px-3 py-2">${student.address}</td>
+                <td class="text-[13px] border px-3 py-2 text-center" style="width: 107px;">
                     <button class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600" onclick="editStudentRow(this)">Sửa</button>
                     <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="deleteStudentRow(this)">Xóa</button>
                 </td>
@@ -414,5 +404,3 @@
     </script>
 
 </body>
-
-</html>
