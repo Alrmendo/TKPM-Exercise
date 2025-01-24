@@ -372,27 +372,49 @@
     });
 
     // thêm sinh viên
-    document.getElementById('add-student-form').addEventListener('submit', function (event) {
-        event.preventDefault();
+    document.getElementById('add-student-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const studentID = document.getElementById('student-id').value.trim();
+        const studentName = document.getElementById('student-name').value.trim();
+        const studentBirthdate = document.getElementById('student-birthdate').value.trim();
+        const studentGender = document.getElementById('student-gender').value;
+        const studentDepartment = document.getElementById('student-department').value;
+        const studentStatus = document.getElementById('student-status').value;
+        const studentEmail = document.getElementById('student-email').value.trim();
+        const studentPhone = document.getElementById('student-phone').value.trim();
+        const studentCourse = document.getElementById('student-course').value.trim();
+        const studentProgram = document.getElementById('student-program').value.trim();
+        const studentAddress = document.getElementById('student-address').value.trim();
 
-        const student = {
-            id: document.getElementById('student-id').value.trim(),
-            name: document.getElementById('student-name').value.trim(),
-            birthdate: document.getElementById('student-birthdate').value.trim(),
-            gender: document.getElementById('student-gender').value.trim(),
-            department: document.getElementById('student-department').value.trim(),
-            status: document.getElementById('student-status').value.trim(),
-            email: document.getElementById('student-email').value.trim(),
-            phone: document.getElementById('student-phone').value.trim(),
-            course: document.getElementById('student-course').value.trim(),
-            program: document.getElementById('student-program').value.trim(),
-            address: document.getElementById('student-address').value.trim(),
+        const students = JSON.parse(localStorage.getItem('students')) || [];
+        const isDuplicate = students.some((student) => student.id === studentID);
+
+        if (isDuplicate) {
+            alert('Mã số sinh viên đã tồn tại! Vui lòng nhập kiểm tra lại.');
+            return;
+        }
+
+        const newStudent = {
+            id: studentID,
+            name: studentName,
+            birthdate: studentBirthdate,
+            gender: studentGender,
+            department: studentDepartment,
+            status: studentStatus,
+            email: studentEmail,
+            phone: studentPhone,
+            course: studentCourse,
+            program: studentProgram,
+            address: studentAddress,
         };
 
-        addStudentRow(student);
-        saveToLocalStorage();
+        addStudentRow(newStudent);
+        students.push(newStudent);
+        localStorage.setItem('students', JSON.stringify(students));
+
         document.getElementById('add-student-form').reset();
     });
 
-    window.onload = loadFromLocalStorage;
+    loadFromLocalStorage();
+
 </script>
