@@ -1,7 +1,7 @@
 # TKPM-EXERCISE
 
 ## Mục lục
-1. [Chạy web trực tiếp](#1-chạy-web-trực-tiếp)
+1. [Chạy bằng link web](#1-chạy-bằng-link-web)
 2. [Hướng dẫn cài đặt và chạy chương trình trên máy](#2-hướng-dẫn-cài-đặt-và-chạy-chương-trình-trên-máy)
    - [Cấu trúc mã nguồn](#21-cấu-trúc-mã-nguồn)
    - [Cài đặt và chạy ứng dụng](#22-cài-đặt-và-chạy-ứng-dụng)
@@ -18,7 +18,7 @@
 
 ---
 
-## 1. Chạy web trực tiếp
+## 1. Chạy bằng link web
 Dạ do web em deploy bằng một nền tảng miễn phí (Render). Do đó, tốc độ tải có thể hơi chậm. Trong trường hợp trang load lâu quá, thầy có thể thử:
 - Thầy ráng đợi một lúc để trang web hiển thị.
 - Nếu vẫn chưa load xong, thầy hãy đóng tab đó và truy cập lại link ạ.
