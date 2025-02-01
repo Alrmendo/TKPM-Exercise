@@ -80,6 +80,7 @@
     <!-- Tìm kiếm sinh viên -->
     <section class="bg-white p-6 rounded shadow-md mb-6">
         <h2 class="text-lg font-bold mb-4">Tìm Kiếm Sinh Viên</h2>
+        <h3 class="text-[14px]">Sẽ hiện ở dưới danh sách sinh viên. Nên có 2 sinh viên để hiểu được rõ hơn</h3>
         <input type="text" id="search-input" class="w-full border border-gray-300 rounded px-3 py-2 mb-4"
             placeholder="Nhập MSSV hoặc Họ Tên...">
     </section>
@@ -123,7 +124,7 @@
             <div>
                 <label for="edit-student-id" class="block font-medium">Mã số sinh viên</label>
                 <input type="text" id="edit-student-id" class="w-full border border-gray-300 rounded px-3 py-2"
-                    readonly>
+                    required>
             </div>
 
             <!-- Họ tên -->
@@ -301,6 +302,7 @@
 
         // Gán dữ liệu vào các trường trong modal
         document.getElementById('edit-student-id').value = studentId;
+        document.getElementById('edit-student-id').setAttribute('data-old-id', studentId);
         document.getElementById('edit-student-name').value = studentName;
         document.getElementById('edit-student-birthdate').value = studentBirthdate;
         document.getElementById('edit-student-gender').value = studentGender;
@@ -324,22 +326,45 @@
     document.getElementById('edit-student-form').addEventListener('submit', function (event) {
         event.preventDefault();
 
-        // Lấy dữ liệu từ modal
-        const studentId = document.getElementById('edit-student-id').value;
-        const studentName = document.getElementById('edit-student-name').value;
-        const studentBirthdate = document.getElementById('edit-student-birthdate').value;
+        const oldStudentId = document.getElementById('edit-student-id').getAttribute('data-old-id');
+        const newStudentId = document.getElementById('edit-student-id').value.trim();
+        const studentName = document.getElementById('edit-student-name').value.trim();
+        const studentBirthdate = document.getElementById('edit-student-birthdate').value.trim();
         const studentGender = document.getElementById('edit-student-gender').value;
         const studentDepartment = document.getElementById('edit-student-department').value;
         const studentStatus = document.getElementById('edit-student-status').value;
-        const studentEmail = document.getElementById('edit-student-email').value;
-        const studentPhone = document.getElementById('edit-student-phone').value;
-        const studentCourse = document.getElementById('edit-student-course').value;
-        const studentProgram = document.getElementById('edit-student-program').value;
-        const studentAddress = document.getElementById('edit-student-address').value;
+        const studentEmail = document.getElementById('edit-student-email').value.trim();
+        const studentPhone = document.getElementById('edit-student-phone').value.trim();
+        const studentCourse = document.getElementById('edit-student-course').value.trim();
+        const studentProgram = document.getElementById('edit-student-program').value.trim();
+        const studentAddress = document.getElementById('edit-student-address').value.trim();
 
-        // Cập nhật dòng trong bảng
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+
+        // Kiểm tra trùng MSSV (ngoại trừ MSSV cũ)
+        const isDuplicate = students.some(student => student.id === newStudentId && student.id !== oldStudentId);
+        if (isDuplicate) {
+            alert('Mã số sinh viên đã tồn tại! Vui lòng nhập lại.');
+            return;
+        }
+
+        // Kiểm tra tính hợp lệ của Email
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(studentEmail)) {
+            alert('Email không hợp lệ! Vui lòng nhập lại.');
+            return;
+        }
+
+        // Kiểm tra tính hợp lệ của Số điện thoại (chỉ chứa số, 9-11 chữ số)
+        const phoneRegex = /^[0-9]{9,11}$/;
+        if (studentPhone && !phoneRegex.test(studentPhone)) {
+            alert('Số điện thoại không hợp lệ! Vui lòng nhập số từ 9-11 chữ số.');
+            return;
+        }
+
         Array.from(tableBody.children).forEach(row => {
-            if (row.children[0].textContent === studentId) {
+            if (row.children[0].textContent === oldStudentId) {
+                row.children[0].textContent = newStudentId;
                 row.children[1].textContent = studentName;
                 row.children[2].textContent = studentBirthdate;
                 row.children[3].textContent = studentGender;
@@ -353,7 +378,26 @@
             }
         });
 
-        saveToLocalStorage();
+        students = students.map(student => {
+            if (student.id === oldStudentId) {
+                return {
+                    id: newStudentId,
+                    name: studentName,
+                    birthdate: studentBirthdate,
+                    gender: studentGender,
+                    department: studentDepartment,
+                    status: studentStatus,
+                    email: studentEmail,
+                    phone: studentPhone,
+                    course: studentCourse,
+                    program: studentProgram,
+                    address: studentAddress,
+                };
+            }
+            return student;
+        });
+
+        localStorage.setItem('students', JSON.stringify(students));
         document.getElementById('edit-modal').classList.add('hidden');
     });
 
@@ -371,9 +415,10 @@
         });
     });
 
-    // thêm sinh viên
+    // Thêm sinh viên
     document.getElementById('add-student-form').addEventListener('submit', (e) => {
         e.preventDefault();
+
         const studentID = document.getElementById('student-id').value.trim();
         const studentName = document.getElementById('student-name').value.trim();
         const studentBirthdate = document.getElementById('student-birthdate').value.trim();
@@ -387,10 +432,25 @@
         const studentAddress = document.getElementById('student-address').value.trim();
 
         const students = JSON.parse(localStorage.getItem('students')) || [];
-        const isDuplicate = students.some((student) => student.id === studentID);
 
+        // Kiểm tra trùng MSSV
+        const isDuplicate = students.some(student => student.id === studentID);
         if (isDuplicate) {
-            alert('Mã số sinh viên đã tồn tại! Vui lòng nhập kiểm tra lại.');
+            alert('Mã số sinh viên đã tồn tại! Vui lòng nhập lại.');
+            return;
+        }
+
+        // Kiểm tra tính hợp lệ của Email
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(studentEmail)) {
+            alert('Email không hợp lệ! Vui lòng nhập lại.');
+            return;
+        }
+
+        // Kiểm tra tính hợp lệ của Số điện thoại (chỉ chứa số, 9-11 chữ số)
+        const phoneRegex = /^[0-9]{9,11}$/;
+        if (studentPhone && !phoneRegex.test(studentPhone)) {
+            alert('Số điện thoại không hợp lệ! Vui lòng nhập số từ 9-11 chữ số.');
             return;
         }
 
@@ -411,9 +471,9 @@
         addStudentRow(newStudent);
         students.push(newStudent);
         localStorage.setItem('students', JSON.stringify(students));
-
         document.getElementById('add-student-form').reset();
     });
+
 
     loadFromLocalStorage();
 
