@@ -2,15 +2,16 @@
 
 ## Mục lục
 1. [Chạy bằng link web](#1-chạy-bằng-link-web)
-2. [Hướng dẫn cài đặt và chạy chương trình trên máy](#2-hướng-dẫn-cài-đặt-và-chạy-chương-trình-trên-máy)
-   - [Cấu trúc mã nguồn](#21-cấu-trúc-mã-nguồn)
-   - [Cài đặt và chạy ứng dụng](#22-cài-đặt-và-chạy-ứng-dụng)
+2. [Ảnh demo website quản lý sinh viên](#2-ảnh-demo-website-quản-lý-sinh-viên)
+3. [Hướng dẫn cài đặt và chạy chương trình trên máy](#3-hướng-dẫn-cài-đặt-và-chạy-chương-trình-trên-máy)
+   - [Cấu trúc mã nguồn](#31-cấu-trúc-mã-nguồn)
+   - [Cài đặt và chạy ứng dụng](#32-cài-đặt-và-chạy-ứng-dụng)
      - [Bước 1: Cài đặt Node.js](#bước-1-cài-đặt-nodejs)
      - [Bước 2: Clone repository](#bước-2-clone-repository)
      - [Bước 3: Cài đặt dependencies](#bước-3-cài-đặt-dependencies)
      - [Bước 4: Chạy server](#bước-4-chạy-server)
      - [Bước 5: Truy cập web](#bước-5-truy-cập-web)
-3. [Chạy từ file ZIP](#3-chạy-từ-file-zip)
+4. [Chạy từ file ZIP](#4-chạy-từ-file-zip)
    - [Bước 1: Giải nén file ZIP](#bước-1-giải-nén-file-zip)
    - [Bước 2: Cài đặt dependencies](#bước-2-cài-đặt-dependencies)
    - [Bước 3: Chạy server](#bước-3-chạy-server)
@@ -27,9 +28,41 @@ Dạ do web em deploy bằng một nền tảng miễn phí (Render). Do đó, t
 
 ---
 
-## 2. Hướng dẫn cài đặt và chạy chương trình trên máy
+## 2. Ảnh demo website quản lý sinh viên
+Dưới đây là một số ảnh chụp màn hình của website:
 
-### 2.1. Cấu trúc mã nguồn
+### Thêm sinh viên mới:
+![Thêm sinh viên mới](./web_demo_pic/demo_add_student.png)
+
+### Danh sách sinh viên:
+![Danh sách sinh viên](./web_demo_pic/demo_student_list.png)
+
+### Tìm kiếm sinh viên:
+![Tìm kiếm sinh viên](./web_demo_pic/demo_search.png)
+
+### Chỉnh sửa thông tin sinh viên:
+![Chỉnh sửa thông tin sinh viên](./web_demo_pic/demo_change_info.png)
+
+### Xóa sinh viên (trước khi xóa):
+![Xóa sinh viên - Trước](./web_demo_pic/before_delete.png)
+
+### Xóa sinh viên (sau khi xóa):
+![Xóa sinh viên - Sau](./web_demo_pic/after_delete.png)
+
+### Kiểm tra validation email:
+![Validation email](./web_demo_pic/mail_validation.png)
+
+### Kiểm tra validation MSSV:
+![Validation MSSV](./web_demo_pic/mssv_validation.png)
+
+### Kiểm tra validation số điện thoại:
+![Validation số điện thoại](./web_demo_pic/phone_validation.png)
+
+---
+
+## 3. Hướng dẫn cài đặt và chạy chương trình trên máy
+
+### 3.1. Cấu trúc mã nguồn
 
 ```
 TKPM-EXERCISE/
@@ -50,7 +83,7 @@ TKPM-EXERCISE/
 │── README.md               # Hướng dẫn sử dụng
 ```
 
-### 2.2. Cài đặt và chạy ứng dụng
+### 3.2. Cài đặt và chạy ứng dụng
 
 #### Bước 1: Cài đặt Node.js
 Ứng dụng yêu cầu **Node.js** và **npm**. Nếu chưa có, hãy tải và cài đặt từ:
@@ -86,7 +119,7 @@ http://localhost:3000
 ```
 ---
 
-## 3. Chạy từ file ZIP
+## 4. Chạy từ file ZIP
 
 #### Bước 1: Giải nén file ZIP
 - Tải file `22127427.zip` và giải nén.
@@ -115,3 +148,4 @@ Mở trình duyệt và truy cập:
 ```
 http://localhost:3000
 ```
+
