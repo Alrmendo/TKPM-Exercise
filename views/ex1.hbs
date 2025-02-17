@@ -58,7 +58,7 @@
                 <input type="tel" id="student-phone" class="w-full border border-gray-300 rounded px-3 py-2">
             </div>
             <div>
-                <label for="student-course" class="block font-medium">Khoá</label>
+                <label for="student-course" class="block font-medium">Khóa</label>
                 <input type="text" id="student-course" class="w-full border border-gray-300 rounded px-3 py-2"
                     placeholder="VD: K22" required>
             </div>
@@ -80,7 +80,6 @@
     <!-- Tìm kiếm sinh viên -->
     <section class="bg-white p-6 rounded shadow-md mb-6">
         <h2 class="text-lg font-bold mb-4">Tìm Kiếm Sinh Viên</h2>
-        <h3 class="text-[14px]">Sẽ hiện ở dưới danh sách sinh viên. Nên có 2 sinh viên để hiểu được rõ hơn</h3>
         <input type="text" id="search-input" class="w-full border border-gray-300 rounded px-3 py-2 mb-4"
             placeholder="Nhập MSSV hoặc Họ Tên...">
     </section>
@@ -103,23 +102,45 @@
                         <th class="border px-3 py-2">Khóa</th>
                         <th class="border px-3 py-2">Chương Trình</th>
                         <th class="border px-3 py-2">Địa Chỉ</th>
-                        <th class="border px-3 py-2">Chỉnh sửa</th>
+                        <th class="border px-6 py-2">Chỉnh sửa</th>
                     </tr>
                 </thead>
                 <tbody id="student-table-body">
-                    <!-- Dữ liệu sinh viên -->
+                    {{#each students}}
+                    <tr>
+                        <td class="border px-3 py-2">{{this.studentId}}</td>
+                        <td class="border px-3 py-2">{{this.name}}</td>
+                        <td class="border px-3 py-2">{{this.birthdate}}</td>
+                        <td class="border px-3 py-2">{{this.gender}}</td>
+                        <td class="border px-3 py-2">{{this.department}}</td>
+                        <td class="border px-3 py-2">{{this.status}}</td>
+                        <td class="border px-3 py-2">{{this.email}}</td>
+                        <td class="border px-3 py-2">{{this.phone}}</td>
+                        <td class="border px-3 py-2">{{this.course}}</td>
+                        <td class="border px-3 py-2">{{this.program}}</td>
+                        <td class="border px-3 py-2">{{this.address}}</td>
+                        <td class="border px-3 py-2">
+                            <button onclick='editStudent({{json this}})'
+                                class="bg-green-500 text-white px-2 py-1 rounded">Sửa</button>
+                            <button onclick="deleteStudent('{{this._id}}')"
+                                class="bg-red-500 text-white px-2 py-1 rounded">Xóa</button>
+                        </td>
+                    </tr>
+                    {{/each}}
                 </tbody>
             </table>
         </div>
     </section>
-
 </main>
 
-<!-- chỉnh sửa sinh viên -->
+<!-- Modal chỉnh sửa sinh viên -->
 <div id="edit-modal" class="flex hidden fixed inset-0 bg-gray-800 bg-opacity-50 items-center justify-center">
-    <div class="bg-white rounded shadow-lg p-6 w-full max-w-4xl">
+    <div class="bg-white rounded shadow-lg p-6 w-full max-w-4xl relative">
         <h3 class="text-xl font-bold mb-4">Chỉnh sửa thông tin sinh viên</h3>
         <form id="edit-student-form" class="grid grid-cols-2 gap-4">
+            <!-- Ẩn ID MongoDB -->
+            <input type="hidden" id="edit-student-db-id">
+
             <!-- Mã số sinh viên -->
             <div>
                 <label for="edit-student-id" class="block font-medium">Mã số sinh viên</label>
@@ -147,7 +168,6 @@
                     <option value="">Chọn</option>
                     <option value="Nam">Nam</option>
                     <option value="Nữ">Nữ</option>
-                    <option value="Khác">Khác</option>
                 </select>
             </div>
 
@@ -179,14 +199,14 @@
             <div>
                 <label for="edit-student-email" class="block font-medium">Email</label>
                 <input type="email" id="edit-student-email" class="w-full border border-gray-300 rounded px-3 py-2"
-                    placeholder="VD: student@example.com" required>
+                    required>
             </div>
 
             <!-- Số điện thoại -->
             <div>
                 <label for="edit-student-phone" class="block font-medium">Số điện thoại</label>
                 <input type="tel" id="edit-student-phone" class="w-full border border-gray-300 rounded px-3 py-2"
-                    placeholder="VD: 0901234567" required>
+                    required>
             </div>
 
             <!-- Khóa -->
@@ -206,8 +226,7 @@
             <!-- Địa chỉ -->
             <div class="col-span-2">
                 <label for="edit-student-address" class="block font-medium">Địa chỉ</label>
-                <input type="text" id="edit-student-address" class="w-full border border-gray-300 rounded px-3 py-2"
-                    placeholder="Nhập địa chỉ sinh viên">
+                <input type="text" id="edit-student-address" class="w-full border border-gray-300 rounded px-3 py-2">
             </div>
 
             <div class="col-span-2 flex justify-end space-x-2">
@@ -221,260 +240,221 @@
     </div>
 </div>
 
+
 <script>
     const tableBody = document.getElementById('student-table-body');
     const searchInput = document.getElementById('search-input');
 
-    // Lưu dữ liệu vào Local Storage (đã sửa để lưu đầy đủ các thông tin từ form)
-    function saveToLocalStorage() {
-        const rows = Array.from(tableBody.children).map(row => ({
-            id: row.children[0].textContent,
-            name: row.children[1].textContent,
-            birthdate: row.children[2].textContent,
-            gender: row.children[3].textContent,
-            department: row.children[4].textContent,
-            status: row.children[5].textContent,
-            email: row.children[6].textContent,
-            phone: row.children[7].textContent,
-            course: row.children[8].textContent,
-            program: row.children[9].textContent,
-            address: row.children[10].textContent,
-        }));
-        localStorage.setItem('students', JSON.stringify(rows));
-    }
-
-    // Load từ Local Storage
-    function loadFromLocalStorage() {
-        const storedData = localStorage.getItem('students');
-        if (storedData) {
-            const students = JSON.parse(storedData);
-            students.forEach(student => addStudentRow(student));
+    // Load danh sách sinh viên từ MongoDB
+    async function loadStudentsFromAPI() {
+        try {
+            const response = await fetch('/students');
+            const students = await response.json();
+            tableBody.innerHTML = ''; // Xóa danh sách cũ trước khi render lại
+            students.forEach(addStudentRow);
+        } catch (error) {
+            console.error("Lỗi tải danh sách sinh viên:", error);
         }
     }
+
+    // Thêm sinh viên mới
+    document.getElementById('add-student-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const newStudent = {
+            studentId: document.getElementById('student-id').value.trim(),
+            name: document.getElementById('student-name').value.trim(),
+            birthdate: document.getElementById('student-birthdate').value.trim(),
+            gender: document.getElementById('student-gender').value,
+            department: document.getElementById('student-department').value,
+            status: document.getElementById('student-status').value,
+            email: document.getElementById('student-email').value.trim(),
+            phone: document.getElementById('student-phone').value.trim(),
+            course: document.getElementById('student-course').value.trim(),
+            program: document.getElementById('student-program').value.trim(),
+            address: document.getElementById('student-address').value.trim(),
+        };
+
+        // Kiểm tra trùng MSSV
+        const response = await fetch('/students');
+        const students = await response.json();
+        if (students.some(student => student.studentId === newStudent.studentId)) {
+            alert('Mã số sinh viên đã tồn tại!');
+            return;
+        }
+
+        // Kiểm tra định dạng Email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(newStudent.email)) {
+            alert('Email không hợp lệ!');
+            return;
+        }
+
+        // Kiểm tra số điện thoại chỉ chứa số và có từ 9-11 chữ số
+        const phoneRegex = /^\d{9,11}$/;
+        if (!phoneRegex.test(newStudent.phone)) {
+            alert('Số điện thoại không hợp lệ! Vui lòng nhập 9-11 chữ số.');
+            return;
+        }
+
+        try {
+            const response = await fetch('/students', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newStudent)
+            });
+
+            if (response.ok) {
+                alert('Thêm sinh viên thành công!');
+                location.reload();
+            } else {
+                alert('Lỗi: ' + (await response.json()).error);
+            }
+        } catch (error) {
+            console.error("Lỗi khi thêm sinh viên:", error);
+        }
+    });
+
+    // Xóa sinh viên
+    async function deleteStudent(studentId) {
+        if (!confirm("Bạn có chắc chắn muốn xóa sinh viên này?")) return;
+
+        try {
+            const response = await fetch(`/students/${studentId}`, { method: 'DELETE' });
+
+            if (response.ok) {
+                alert('Xóa sinh viên thành công!');
+                location.reload();
+            } else {
+                alert('Lỗi khi xóa sinh viên!');
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa sinh viên:", error);
+        }
+    }
+
+    // Mở modal chỉnh sửa sinh viên
+    function editStudent(student) {
+        document.getElementById('edit-student-db-id').value = student._id;  // Gán ID MongoDB vào input ẩn
+        document.getElementById('edit-student-id').value = student.studentId;
+        document.getElementById('edit-student-name').value = student.name;
+        document.getElementById('edit-student-birthdate').value = student.birthdate || "";
+        document.getElementById('edit-student-gender').value = student.gender;
+        document.getElementById('edit-student-department').value = student.department;
+        document.getElementById('edit-student-status').value = student.status;
+        document.getElementById('edit-student-email').value = student.email;
+        document.getElementById('edit-student-phone').value = student.phone || "";
+        document.getElementById('edit-student-course').value = student.course || "";
+        document.getElementById('edit-student-program').value = student.program || "";
+        document.getElementById('edit-student-address').value = student.address || "";
+
+        document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    // Đóng modal khi bấm nút "Hủy"
+    document.getElementById('cancel-edit').addEventListener('click', function () {
+        document.getElementById('edit-modal').classList.add('hidden');
+    });
+
+    // Cập nhật sinh viên
+    document.getElementById('edit-student-form').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const studentId = document.getElementById('edit-student-db-id').value; // Lấy _id của MongoDB
+        const updatedStudent = {
+            studentId: document.getElementById('edit-student-id').value.trim(),
+            name: document.getElementById('edit-student-name').value.trim(),
+            birthdate: document.getElementById('edit-student-birthdate').value.trim(),
+            gender: document.getElementById('edit-student-gender').value,
+            department: document.getElementById('edit-student-department').value,
+            status: document.getElementById('edit-student-status').value,
+            email: document.getElementById('edit-student-email').value.trim(),
+            phone: document.getElementById('edit-student-phone').value.trim(),
+            course: document.getElementById('edit-student-course').value.trim(),
+            program: document.getElementById('edit-student-program').value.trim(),
+            address: document.getElementById('edit-student-address').value.trim(),
+        };
+
+        // Kiểm tra trùng MSSV (ngoại trừ MSSV cũ)
+        const response = await fetch('/students');
+        const students = await response.json();
+        if (students.some(student => student.studentId === updatedStudent.studentId && student._id !== studentId)) {
+            alert('Mã số sinh viên đã tồn tại!');
+            return;
+        }
+
+        // Kiểm tra định dạng Email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(updatedStudent.email)) {
+            alert('Email không hợp lệ!');
+            return;
+        }
+
+        // Kiểm tra số điện thoại chỉ chứa số và có từ 9-11 chữ số
+        const phoneRegex = /^\d{9,11}$/;
+        if (!phoneRegex.test(updatedStudent.phone)) {
+            alert('Số điện thoại không hợp lệ! Vui lòng nhập 9-11 chữ số.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/students/${studentId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedStudent),
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('Cập nhật thành công!');
+                location.reload();
+            } else {
+                alert('Lỗi khi cập nhật: ' + result.error);
+            }
+        } catch (error) {
+            console.error("Lỗi khi cập nhật sinh viên:", error);
+            alert('Có lỗi xảy ra khi cập nhật!');
+        }
+    });
+
+
+    // Tìm kiếm sinh viên theo MSSV hoặc tên
+    searchInput.addEventListener('input', function () {
+        const filter = searchInput.value.toLowerCase();
+        Array.from(tableBody.children).forEach(row => {
+            const studentId = row.children[0].textContent.toLowerCase();
+            const studentName = row.children[1].textContent.toLowerCase();
+            row.style.display = studentId.includes(filter) || studentName.includes(filter) ? '' : 'none';
+        });
+    });
 
     // Thêm sinh viên vào bảng
     function addStudentRow(student) {
         const newRow = document.createElement('tr');
 
         newRow.innerHTML = `
-                <td class="text-[13px] border px-3 py-2">${student.id}</td>
-                <td class="text-[13px] border px-3 py-2">${student.name}</td>
-                <td class="text-[13px] border px-3 py-2">${student.birthdate}</td>
-                <td class="text-[13px] border px-3 py-2">${student.gender}</td>
-                <td class="text-[13px] border px-3 py-2">${student.department}</td>
-                <td class="text-[13px] border px-3 py-2">${student.status}</td>
-                <td class="text-[13px] border px-3 py-2">${student.email}</td>
-                <td class="text-[13px] border px-3 py-2">${student.phone}</td>
-                <td class="text-[13px] border px-3 py-2">${student.course}</td>
-                <td class="text-[13px] border px-3 py-2">${student.program}</td>
-                <td class="text-[13px] border px-3 py-2">${student.address}</td>
-                <td class="text-[13px] border px-3 py-2 text-center" style="width: 107px;">
-                    <button class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600" onclick="editStudentRow(this)">Sửa</button>
-                    <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" onclick="deleteStudentRow(this)">Xóa</button>
-                </td>
-            `;
+        <td class="text-[13px] border px-3 py-2">${student.studentId || ''}</td>
+        <td class="text-[13px] border px-3 py-2">${student.name || ''}</td>
+        <td class="text-[13px] border px-3 py-2">${student.birthdate || ''}</td>
+        <td class="text-[13px] border px-3 py-2">${student.gender || ''}</td>
+        <td class="text-[13px] border px-3 py-2">${student.department || ''}</td>
+        <td class="text-[13px] border px-3 py-2">${student.status || ''}</td>
+        <td class="text-[13px] border px-3 py-2">${student.email || ''}</td>
+        <td class="text-[13px] border px-3 py-2">${student.phone || ''}</td>
+        <td class="text-[13px] border px-3 py-2">${student.course || ''}</td>
+        <td class="text-[13px] border px-3 py-2">${student.program || ''}</td>
+        <td class="text-[13px] border px-3 py-2">${student.address || ''}</td>
+        <td class="text-[13px] border px-3 py-2">
+            <button class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600" 
+                onclick='editStudent(${JSON.stringify(student)})'>Sửa</button>
+            <button class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600" 
+                onclick="deleteStudent('${student._id}')">Xóa</button>
+        </td>
+    `;
 
         tableBody.appendChild(newRow);
     }
-
-    // Xóa sinh viên khỏi bảng
-    function deleteStudentRow(button) {
-        button.parentElement.parentElement.remove();
-        saveToLocalStorage();
-    }
-
-    // Mở modal chỉnh sửa
-    function editStudentRow(button) {
-        const row = button.parentElement.parentElement;
-
-        // Lấy dữ liệu từ dòng của bảng
-        const studentId = row.children[0].textContent;
-        const studentName = row.children[1].textContent;
-        const studentBirthdate = row.children[2].textContent;
-        const studentGender = row.children[3].textContent;
-        const studentDepartment = row.children[4].textContent;
-        const studentStatus = row.children[5].textContent;
-        const studentEmail = row.children[6].textContent;
-        const studentPhone = row.children[7].textContent;
-        const studentCourse = row.children[8].textContent;
-        const studentProgram = row.children[9].textContent;
-        const studentAddress = row.children[10].textContent;
-
-        // Gán dữ liệu vào các trường trong modal
-        document.getElementById('edit-student-id').value = studentId;
-        document.getElementById('edit-student-id').setAttribute('data-old-id', studentId);
-        document.getElementById('edit-student-name').value = studentName;
-        document.getElementById('edit-student-birthdate').value = studentBirthdate;
-        document.getElementById('edit-student-gender').value = studentGender;
-        document.getElementById('edit-student-department').value = studentDepartment;
-        document.getElementById('edit-student-status').value = studentStatus;
-        document.getElementById('edit-student-email').value = studentEmail;
-        document.getElementById('edit-student-phone').value = studentPhone;
-        document.getElementById('edit-student-course').value = studentCourse;
-        document.getElementById('edit-student-program').value = studentProgram;
-        document.getElementById('edit-student-address').value = studentAddress;
-
-        const modal = document.getElementById('edit-modal');
-        modal.classList.remove('hidden');
-    }
-
-    document.getElementById('cancel-edit').addEventListener('click', function () {
-        document.getElementById('edit-modal').classList.add('hidden');
-    });
-
-    // Cập nhật dữ liệu sau khi chỉnh sửa
-    document.getElementById('edit-student-form').addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        const oldStudentId = document.getElementById('edit-student-id').getAttribute('data-old-id');
-        const newStudentId = document.getElementById('edit-student-id').value.trim();
-        const studentName = document.getElementById('edit-student-name').value.trim();
-        const studentBirthdate = document.getElementById('edit-student-birthdate').value.trim();
-        const studentGender = document.getElementById('edit-student-gender').value;
-        const studentDepartment = document.getElementById('edit-student-department').value;
-        const studentStatus = document.getElementById('edit-student-status').value;
-        const studentEmail = document.getElementById('edit-student-email').value.trim();
-        const studentPhone = document.getElementById('edit-student-phone').value.trim();
-        const studentCourse = document.getElementById('edit-student-course').value.trim();
-        const studentProgram = document.getElementById('edit-student-program').value.trim();
-        const studentAddress = document.getElementById('edit-student-address').value.trim();
-
-        let students = JSON.parse(localStorage.getItem('students')) || [];
-
-        // Kiểm tra trùng MSSV (ngoại trừ MSSV cũ)
-        const isDuplicate = students.some(student => student.id === newStudentId && student.id !== oldStudentId);
-        if (isDuplicate) {
-            alert('Mã số sinh viên đã tồn tại! Vui lòng nhập lại.');
-            return;
-        }
-
-        // Kiểm tra tính hợp lệ của Email
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(studentEmail)) {
-            alert('Email không hợp lệ! Vui lòng nhập lại.');
-            return;
-        }
-
-        // Kiểm tra tính hợp lệ của Số điện thoại (chỉ chứa số, 9-11 chữ số)
-        const phoneRegex = /^[0-9]{9,11}$/;
-        if (studentPhone && !phoneRegex.test(studentPhone)) {
-            alert('Số điện thoại không hợp lệ! Vui lòng nhập số từ 9-11 chữ số.');
-            return;
-        }
-
-        Array.from(tableBody.children).forEach(row => {
-            if (row.children[0].textContent === oldStudentId) {
-                row.children[0].textContent = newStudentId;
-                row.children[1].textContent = studentName;
-                row.children[2].textContent = studentBirthdate;
-                row.children[3].textContent = studentGender;
-                row.children[4].textContent = studentDepartment;
-                row.children[5].textContent = studentStatus;
-                row.children[6].textContent = studentEmail;
-                row.children[7].textContent = studentPhone;
-                row.children[8].textContent = studentCourse;
-                row.children[9].textContent = studentProgram;
-                row.children[10].textContent = studentAddress;
-            }
-        });
-
-        students = students.map(student => {
-            if (student.id === oldStudentId) {
-                return {
-                    id: newStudentId,
-                    name: studentName,
-                    birthdate: studentBirthdate,
-                    gender: studentGender,
-                    department: studentDepartment,
-                    status: studentStatus,
-                    email: studentEmail,
-                    phone: studentPhone,
-                    course: studentCourse,
-                    program: studentProgram,
-                    address: studentAddress,
-                };
-            }
-            return student;
-        });
-
-        localStorage.setItem('students', JSON.stringify(students));
-        document.getElementById('edit-modal').classList.add('hidden');
-    });
-
-    // Tìm kiếm sinh viên
-    searchInput.addEventListener('input', function () {
-        const filter = searchInput.value.toLowerCase();
-        Array.from(tableBody.children).forEach(row => {
-            const studentId = row.children[0].textContent.toLowerCase();
-            const studentName = row.children[1].textContent.toLowerCase();
-            if (studentId.includes(filter) || studentName.includes(filter)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
-
-    // Thêm sinh viên
-    document.getElementById('add-student-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const studentID = document.getElementById('student-id').value.trim();
-        const studentName = document.getElementById('student-name').value.trim();
-        const studentBirthdate = document.getElementById('student-birthdate').value.trim();
-        const studentGender = document.getElementById('student-gender').value;
-        const studentDepartment = document.getElementById('student-department').value;
-        const studentStatus = document.getElementById('student-status').value;
-        const studentEmail = document.getElementById('student-email').value.trim();
-        const studentPhone = document.getElementById('student-phone').value.trim();
-        const studentCourse = document.getElementById('student-course').value.trim();
-        const studentProgram = document.getElementById('student-program').value.trim();
-        const studentAddress = document.getElementById('student-address').value.trim();
-
-        const students = JSON.parse(localStorage.getItem('students')) || [];
-
-        // Kiểm tra trùng MSSV
-        const isDuplicate = students.some(student => student.id === studentID);
-        if (isDuplicate) {
-            alert('Mã số sinh viên đã tồn tại! Vui lòng nhập lại.');
-            return;
-        }
-
-        // Kiểm tra tính hợp lệ của Email
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailRegex.test(studentEmail)) {
-            alert('Email không hợp lệ! Vui lòng nhập lại.');
-            return;
-        }
-
-        // Kiểm tra tính hợp lệ của Số điện thoại (chỉ chứa số, 9-11 chữ số)
-        const phoneRegex = /^[0-9]{9,11}$/;
-        if (studentPhone && !phoneRegex.test(studentPhone)) {
-            alert('Số điện thoại không hợp lệ! Vui lòng nhập số từ 9-11 chữ số.');
-            return;
-        }
-
-        const newStudent = {
-            id: studentID,
-            name: studentName,
-            birthdate: studentBirthdate,
-            gender: studentGender,
-            department: studentDepartment,
-            status: studentStatus,
-            email: studentEmail,
-            phone: studentPhone,
-            course: studentCourse,
-            program: studentProgram,
-            address: studentAddress,
-        };
-
-        addStudentRow(newStudent);
-        students.push(newStudent);
-        localStorage.setItem('students', JSON.stringify(students));
-        document.getElementById('add-student-form').reset();
-    });
-
-
-    loadFromLocalStorage();
-
+    // Load danh sách khi trang được mở
+    document.addEventListener('DOMContentLoaded', loadStudentsFromAPI);
 </script>
