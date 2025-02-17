@@ -22,31 +22,31 @@
 Dưới đây là một số ảnh chụp màn hình của website:
 
 ### Thêm sinh viên mới:
-![Thêm sinh viên mới](./web_demo_pic/demo_add_student.png)
+![Thêm sinh viên mới](./screenshots/demo_add_student.png)
 
 ### Danh sách sinh viên:
-![Danh sách sinh viên](./web_demo_pic/demo_student_list.png)
+![Danh sách sinh viên](./screenshots/demo_student_list.png)
 
 ### Tìm kiếm sinh viên:
-![Tìm kiếm sinh viên](./web_demo_pic/demo_search.png)
+![Tìm kiếm sinh viên](./screenshots/demo_search.png)
 
 ### Chỉnh sửa thông tin sinh viên:
-![Chỉnh sửa thông tin sinh viên](./web_demo_pic/demo_change_info.png)
+![Chỉnh sửa thông tin sinh viên](./screenshots/demo_change_info.png)
 
 ### Xóa sinh viên (trước khi xóa):
-![Xóa sinh viên - Trước](./web_demo_pic/before_delete.png)
+![Xóa sinh viên - Trước](./screenshots/before_delete.png)
 
 ### Xóa sinh viên (sau khi xóa):
-![Xóa sinh viên - Sau](./web_demo_pic/after_delete.png)
+![Xóa sinh viên - Sau](./screenshots/after_delete.png)
 
 ### Kiểm tra validation email:
-![Validation email](./web_demo_pic/mail_validation.png)
+![Validation email](./screenshots/mail_validation.png)
 
 ### Kiểm tra validation MSSV:
-![Validation MSSV](./web_demo_pic/mssv_validation.png)
+![Validation MSSV](./screenshots/mssv_validation.png)
 
 ### Kiểm tra validation số điện thoại:
-![Validation số điện thoại](./web_demo_pic/phone_validation.png)
+![Validation số điện thoại](./screenshots/phone_validation.png)
 
 ---
 
