@@ -1,7 +1,46 @@
 import express from 'express';
 import Student from '../models/Student.js';
+import Config from '../models/Config.js'; // Import model mới
 
 const router = express.Router();
+
+// Lấy danh sách department, status, program
+router.get('/config', async (req, res) => {
+    try {
+        let config = await Config.findOne();
+        if (!config) {
+            config = await Config.create({});
+        }
+        res.json(config);
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi lấy danh sách cấu hình!" });
+    }
+});
+
+// Cập nhật danh sách department, status, program
+router.post('/config', async (req, res) => {
+    try {
+        let config = await Config.findOne();
+        if (!config) {
+            config = new Config({});
+        }
+
+        if (req.body.departments) {
+            config.departments = req.body.departments;
+        }
+        if (req.body.statuses) {
+            config.statuses = req.body.statuses;
+        }
+        if (req.body.programs) {
+            config.programs = req.body.programs;
+        }
+
+        await config.save();
+        res.json({ message: "Cập nhật thành công!", config });
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi cập nhật danh sách cấu hình!" });
+    }
+});
 
 // Hiển thị danh sách sinh viên
 router.get('/', async (req, res) => {
@@ -32,6 +71,9 @@ router.post('/students', async (req, res) => {
         await student.save();
         res.status(201).json({ message: 'Sinh viên đã được thêm!', student });
     } catch (err) {
+        if (err.code === 11000) {
+            return res.status(400).json({ error: 'Email bị trùng' });
+        }
         res.status(400).json({ error: err.message });
     }
 });
