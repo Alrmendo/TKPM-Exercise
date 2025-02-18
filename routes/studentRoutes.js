@@ -1,8 +1,115 @@
 import express from 'express';
 import Student from '../models/Student.js';
-import Config from '../models/Config.js'; // Import model mới
+import Config from '../models/Config.js';
+//export data
+import { Parser } from 'json2csv';
+import ExcelJS from 'exceljs';
+//import data
+import multer from 'multer';
+import csvParser from 'csv-parser';
+
+import fs from 'fs';
 
 const router = express.Router();
+const upload = multer({ dest: 'uploads/' });
+
+// Import JSON
+router.post('/import/json', upload.single('file'), async (req, res) => {
+    try {
+        const data = JSON.parse(fs.readFileSync(req.file.path, 'utf-8'));
+        await Student.insertMany(data);
+        res.json({ message: "Import JSON thành công!" });
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi import JSON!" });
+    }
+});
+
+// Import Excel
+router.post('/import/excel', upload.single('file'), async (req, res) => {
+    try {
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(req.file.path);
+        const worksheet = workbook.worksheets[0]; // Lấy sheet đầu tiên
+        const students = [];
+
+        worksheet.eachRow((row, rowNumber) => {
+            if (rowNumber === 1) return; // Bỏ qua dòng tiêu đề
+            students.push({
+                studentId: row.getCell(1).value,
+                name: row.getCell(2).value,
+                birthdate: row.getCell(3).value,
+                gender: row.getCell(4).value,
+                department: row.getCell(5).value,
+                status: row.getCell(6).value,
+                email: row.getCell(7).value,
+                phone: row.getCell(8).value,
+                course: row.getCell(9).value,
+                program: row.getCell(10).value,
+                address: row.getCell(11).value
+            });
+        });
+
+        await Student.insertMany(students);
+        res.json({ message: "Import Excel thành công!" });
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi import Excel!" });
+    }
+});
+
+// Xuất dữ liệu dạng JSON
+router.get('/export/json', async (req, res) => {
+    try {
+        const students = await Student.find({});
+        res.setHeader('Content-Disposition', 'attachment; filename=students.json');
+        res.setHeader('Content-Type', 'application/json');
+        res.json(students);
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi xuất JSON!" });
+    }
+});
+
+// Xuất dữ liệu dạng Excel
+router.get('/export/excel', async (req, res) => {
+    try {
+        const students = await Student.find({});
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet("Students");
+
+        // Thêm tiêu đề cột
+        worksheet.columns = [
+            { header: "MSSV", key: "studentId", width: 15 },
+            { header: "Họ Tên", key: "name", width: 20 },
+            { header: "Ngày Sinh", key: "birthdate", width: 15 },
+            { header: "Giới Tính", key: "gender", width: 10 },
+            { header: "Khoa", key: "department", width: 20 },
+            { header: "Tình Trạng", key: "status", width: 15 },
+            { header: "Email", key: "email", width: 25 },
+            { header: "SĐT", key: "phone", width: 15 },
+            { header: "Khóa", key: "course", width: 10 },
+            { header: "Chương Trình", key: "program", width: 20 },
+            { header: "Địa Chỉ", key: "address", width: 30 }
+        ];
+
+        // Thêm dữ liệu sinh viên vào bảng
+        students.forEach(student => {
+            worksheet.addRow(student);
+        });
+
+        // Định dạng tiêu đề cột (chữ in đậm)
+        worksheet.getRow(1).eachCell(cell => {
+            cell.font = { bold: true };
+        });
+
+        // Xuất file Excel
+        res.setHeader('Content-Disposition', 'attachment; filename=students.xlsx');
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        res.send(buffer);
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi xuất Excel!" });
+    }
+});
 
 // Lấy danh sách department, status, program
 router.get('/config', async (req, res) => {
