@@ -5,7 +5,40 @@
 </header>
 
 <main class="w-[95%] mx-auto px-1 py-6">
-    <!-- Form thêm sinh viên -->
+    <!-- Import/Export -->
+    <section class="bg-white p-6 rounded shadow-md mb-6">
+        <h2 class="text-lg font-bold mb-4">Import/Export Dữ Liệu</h2>
+
+        <div class="flex gap-4">
+            <button id="export-btn" class="bg-[#f60] text-white px-4 py-2 rounded">Export</button>
+        </div>
+
+        <!-- Popup chọn loại export -->
+        <div id="export-popup" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white p-6 rounded shadow-lg w-80">
+                <h3 class="text-lg font-bold mb-4">Chọn định dạng xuất</h3>
+                <select id="export-type" class="w-full border border-gray-300 rounded px-3 py-2 mb-4">
+                    <option value="json">JSON</option>
+                    <option value="excel">Excel</option>
+                </select>
+                <div class="flex justify-end space-x-2">
+                    <button id="cancel-export"
+                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Hủy</button>
+                    <button id="confirm-export"
+                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">OK</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form nhập file -->
+        <form id="import-form" enctype="multipart/form-data" class="mt-4 flex items-center gap-4">
+            <input type="file" id="import-file" accept=".csv, .json, .xlsx"
+                class="border border-gray-300 rounded px-3 py-2">
+            <button type="submit" class="bg-[#117A65] text-white px-4 py-2 rounded">Import</button>
+        </form>
+    </section>
+
+    <!-- Form thêm sinh viên  -->
     <section class="bg-white p-6 rounded shadow-md mb-6">
         <h2 class="text-lg font-bold mb-4">Thêm Sinh Viên Mới</h2>
         <form id="add-student-form" class="grid grid-cols-1 text-[15px] md:grid-cols-2 gap-4">
@@ -99,7 +132,7 @@
             <option value="{{this}}">{{this}}</option>
             {{/each}}
         </select>
-        
+
         <input type="text" id="search-input" class="w-full border border-gray-300 rounded px-3 py-2 mb-4"
             placeholder="Nhập MSSV hoặc Họ Tên...">
     </section>
@@ -708,4 +741,50 @@
             console.error(`Lỗi khi xóa ${type}:`, error);
         }
     }
+
+    document.getElementById('export-btn').addEventListener('click', () => {
+        document.getElementById('export-popup').classList.remove('hidden');
+    });
+
+    document.getElementById('cancel-export').addEventListener('click', () => {
+        document.getElementById('export-popup').classList.add('hidden');
+    });
+
+    document.getElementById('confirm-export').addEventListener('click', () => {
+        const format = document.getElementById('export-type').value;
+        window.location.href = `/export/${format}`;
+        document.getElementById('export-popup').classList.add('hidden');
+    });
+
+    document.getElementById('import-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fileInput = document.getElementById('import-file');
+        if (!fileInput.files.length) {
+            alert("Vui lòng chọn file!");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        let endpoint;
+        if (file.name.endsWith('.json')) {
+            endpoint = '/import/json';
+        } else if (file.name.endsWith('.xlsx')) {
+            endpoint = '/import/excel';
+        } else {
+            alert('Định dạng file không hợp lệ!');
+            return;
+        }
+
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+        alert(result.message);
+        if (response.ok) location.reload();
+    });
 </script>
