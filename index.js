@@ -5,6 +5,7 @@ import { dirname } from 'path';
 import { engine } from 'express-handlebars';
 import studentRoutes from './routes/studentRoutes.js';
 import databaseService from './database/db.js';
+import './buildDate.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
