@@ -1,12 +1,11 @@
 import express from 'express';
 import Student from '../models/Student.js';
 import Config from '../models/Config.js';
+import path from 'path';
 //export data
-import { Parser } from 'json2csv';
 import ExcelJS from 'exceljs';
 //import data
 import multer from 'multer';
-import csvParser from 'csv-parser';
 //Logger
 import logger from '../utils/logger.js';
 
@@ -258,6 +257,25 @@ router.delete('/students/:id', async (req, res) => {
     } catch (err) {
         logger.error(`Lỗi khi xóa sinh viên: ${err.message}`);
         res.status(500).json({ error: err.message });
+    }
+});
+
+// Lấy phiên bản và ngày build
+router.get('/version', (req, res) => {
+    try {
+        const packageJsonPath = path.join(process.cwd(), 'package.json');
+        const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+
+        const versionInfo = {
+            version: packageJson.version || 'Không rõ',
+            build_date: packageJson.build_date || 'Không rõ'
+        };
+
+        logger.info(`Lấy thông tin version: ${JSON.stringify(versionInfo)}`);
+        res.json(versionInfo);
+    } catch (err) {
+        logger.error(`Lỗi khi lấy thông tin version: ${err.message}`);
+        res.status(500).json({ error: 'Lỗi khi lấy thông tin phiên bản!' });
     }
 });
 
