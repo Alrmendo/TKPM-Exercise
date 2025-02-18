@@ -601,7 +601,6 @@
     }
 
     async function removeOption(type) {
-        // Lấy ID của dropdown dựa trên loại (Khoa, Tình trạng sinh viên, Chương trình đào tạo)
         const selectElement = type === "Khoa" ? "student-department"
             : type === "Tình trạng sinh viên" ? "student-status"
                 : "student-program";
@@ -617,11 +616,10 @@
 
         // Xác nhận việc xóa
         if (!confirm(`Bạn có chắc chắn muốn xóa ${type}: "${selectedValue}"?`)) {
-            return; // Dừng nếu người dùng không xác nhận
+            return;
         }
 
         try {
-            // Lấy cấu hình hiện tại từ server
             const response = await fetch('/config');
             let config = await response.json();
 
@@ -634,7 +632,6 @@
                 config.programs = config.programs.filter(item => item !== selectedValue);
             }
 
-            // Lưu lại cấu hình đã thay đổi
             await fetch('/config', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -642,7 +639,7 @@
             });
 
             alert(`${type} "${selectedValue}" đã được xóa!`);
-            loadConfigOptions(); // Tải lại danh sách sau khi xóa
+            loadConfigOptions();
         } catch (error) {
             console.error(`Lỗi khi xóa ${type}:`, error);
         }
