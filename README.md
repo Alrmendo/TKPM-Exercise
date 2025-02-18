@@ -1,16 +1,17 @@
 # TKPM-EXERCISE
 
 ## Mục lục
-1. [Ảnh demo website quản lý sinh viên](#1-ảnh-demo-website-quản-lý-sinh-viên)
-2. [Hướng dẫn cài đặt và chạy chương trình trên máy](#2-hướng-dẫn-cài-đặt-và-chạy-chương-trình-trên-máy)
-   - [Cấu trúc mã nguồn](#21-cấu-trúc-mã-nguồn)
-   - [Cài đặt và chạy ứng dụng](#22-cài-đặt-và-chạy-ứng-dụng)
+1. [Chạy bằng link web](#1-chạy-bằng-link-web)
+2. [Ảnh demo website quản lý sinh viên](#2-ảnh-demo-website-quản-lý-sinh-viên)
+3. [Hướng dẫn cài đặt và chạy chương trình trên máy](#3-hướng-dẫn-cài-đặt-và-chạy-chương-trình-trên-máy)
+   - [Cấu trúc mã nguồn](#31-cấu-trúc-mã-nguồn)
+   - [Cài đặt và chạy ứng dụng](#32-cài-đặt-và-chạy-ứng-dụng)
      - [Bước 1: Cài đặt Node.js](#bước-1-cài-đặt-nodejs)
      - [Bước 2: Clone repository](#bước-2-clone-repository)
      - [Bước 3: Cài đặt dependencies](#bước-3-cài-đặt-dependencies)
      - [Bước 4: Chạy server](#bước-4-chạy-server)
      - [Bước 5: Truy cập web](#bước-5-truy-cập-web)
-3. [Chạy từ file ZIP](#3-chạy-từ-file-zip)
+4. [Chạy từ file ZIP](#4-chạy-từ-file-zip)
    - [Bước 1: Giải nén file ZIP](#bước-1-giải-nén-file-zip)
    - [Bước 2: Cài đặt dependencies](#bước-2-cài-đặt-dependencies)
    - [Bước 3: Chạy server](#bước-3-chạy-server)
@@ -18,7 +19,16 @@
 
 ---
 
-## 1. Ảnh demo website quản lý sinh viên
+## 1. Chạy bằng link web
+Dạ do web em deploy bằng một nền tảng miễn phí (Render). Do đó, tốc độ tải có thể hơi chậm. Trong trường hợp trang load lâu quá, thầy có thể thử:
+- Thầy ráng đợi một lúc để trang web hiển thị.
+- Nếu vẫn chưa load xong, thầy hãy đóng tab đó và truy cập lại link ạ.
+
+🔗 **Link chạy web:** https://tkpm-ex1.onrender.com/
+
+---
+
+## 2. Ảnh demo website quản lý sinh viên
 Dưới đây là một số ảnh chụp màn hình của website:
 
 ### Thêm sinh viên mới:
@@ -50,9 +60,9 @@ Dưới đây là một số ảnh chụp màn hình của website:
 
 ---
 
-## 2. Hướng dẫn cài đặt và chạy chương trình trên máy
+## 3. Hướng dẫn cài đặt và chạy chương trình trên máy
 
-### 2.1. Cấu trúc mã nguồn
+### 3.1. Cấu trúc mã nguồn
 
 ```
 TKPM-EXERCISE/
@@ -73,7 +83,7 @@ TKPM-EXERCISE/
 │── README.md               # Hướng dẫn sử dụng
 ```
 
-### 2.2. Cài đặt và chạy ứng dụng
+### 3.2. Cài đặt và chạy ứng dụng
 
 #### Bước 1: Cài đặt Node.js
 Ứng dụng yêu cầu **Node.js** và **npm**. Nếu chưa có, hãy tải và cài đặt từ:
@@ -109,7 +119,7 @@ http://localhost:3000
 ```
 ---
 
-## 3. Chạy từ file ZIP
+## 4. Chạy từ file ZIP
 
 #### Bước 1: Giải nén file ZIP
 - Tải file `22127427.zip` và giải nén.
