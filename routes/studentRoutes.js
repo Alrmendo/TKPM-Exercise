@@ -7,34 +7,55 @@ import ExcelJS from 'exceljs';
 //import data
 import multer from 'multer';
 import csvParser from 'csv-parser';
+//Logger
+import logger from '../utils/logger.js';
 
 import fs from 'fs';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
-// Import JSON
+// Import JSON + Logger
 router.post('/import/json', upload.single('file'), async (req, res) => {
     try {
+        logger.info(`Import JSON bắt đầu: ${req.file.originalname}`);
         const data = JSON.parse(fs.readFileSync(req.file.path, 'utf-8'));
-        await Student.insertMany(data);
-        res.json({ message: "Import JSON thành công!" });
+
+        let importedCount = 0;
+        for (const student of data) {
+            const existingStudent = await Student.findOne({ studentId: student.studentId });
+            if (existingStudent) {
+                // Nếu MSSV đã tồn tại, cập nhật thông tin
+                await Student.updateOne({ studentId: student.studentId }, student);
+                // logger.info(`Cập nhật thông tin: MSSV ${student.studentId}`);
+            } else {
+                // Nếu MSSV chưa tồn tại, thêm mới
+                await Student.create(student);
+                importedCount++;
+            }
+        }
+
+        logger.info(`Import JSON hoàn tất: ${importedCount} sinh viên mới.`);
+        res.json({ message: `Import thành công! ${importedCount} sinh viên mới được thêm.` });
     } catch (err) {
+        logger.error(`Lỗi khi import JSON: ${err.message}`);
         res.status(500).json({ error: "Lỗi khi import JSON!" });
     }
 });
 
-// Import Excel
+// Import Excel + Logger
 router.post('/import/excel', upload.single('file'), async (req, res) => {
     try {
+        logger.info(`Bắt đầu import file Excel: ${req.file.originalname}`);
+
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(req.file.path);
-        const worksheet = workbook.worksheets[0]; // Lấy sheet đầu tiên
-        const students = [];
+        const worksheet = workbook.worksheets[0];
+        let importedCount = 0;
 
-        worksheet.eachRow((row, rowNumber) => {
-            if (rowNumber === 1) return; // Bỏ qua dòng tiêu đề
-            students.push({
+        for (let i = 2; i <= worksheet.rowCount; i++) {
+            const row = worksheet.getRow(i);
+            const studentData = {
                 studentId: row.getCell(1).value,
                 name: row.getCell(2).value,
                 birthdate: row.getCell(3).value,
@@ -46,36 +67,49 @@ router.post('/import/excel', upload.single('file'), async (req, res) => {
                 course: row.getCell(9).value,
                 program: row.getCell(10).value,
                 address: row.getCell(11).value
-            });
-        });
+            };
 
-        await Student.insertMany(students);
-        res.json({ message: "Import Excel thành công!" });
+            const existingStudent = await Student.findOne({ studentId: studentData.studentId });
+            if (existingStudent) {
+                await Student.updateOne({ studentId: studentData.studentId }, studentData);
+                // logger.info(`Cập nhật thông tin: MSSV ${studentData.studentId}`);
+            } else {
+                await Student.create(studentData);
+                importedCount++;
+            }
+        }
+
+        logger.info(`Import Excel hoàn tất: ${importedCount} sinh viên mới.`);
+        res.json({ message: `Import thành công! ${importedCount} sinh viên mới được thêm.` });
     } catch (err) {
+        logger.error(`Lỗi khi import Excel: ${err.message}`);
         res.status(500).json({ error: "Lỗi khi import Excel!" });
     }
 });
 
-// Xuất dữ liệu dạng JSON
+// Xuất dữ liệu dạng JSON + Logger
 router.get('/export/json', async (req, res) => {
     try {
         const students = await Student.find({});
+        logger.info(`Xuất JSON - Tổng số sinh viên: ${students.length}`);
         res.setHeader('Content-Disposition', 'attachment; filename=students.json');
         res.setHeader('Content-Type', 'application/json');
         res.json(students);
     } catch (err) {
+        logger.error(`Lỗi khi xuất JSON: ${err.message}`);
         res.status(500).json({ error: "Lỗi khi xuất JSON!" });
     }
 });
 
-// Xuất dữ liệu dạng Excel
+// Xuất dữ liệu dạng Excel + Logger
 router.get('/export/excel', async (req, res) => {
     try {
         const students = await Student.find({});
+        logger.info(`Yêu cầu xuất Excel - Số lượng sinh viên: ${students.length}`);
+
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet("Students");
 
-        // Thêm tiêu đề cột
         worksheet.columns = [
             { header: "MSSV", key: "studentId", width: 15 },
             { header: "Họ Tên", key: "name", width: 20 },
@@ -90,23 +124,19 @@ router.get('/export/excel', async (req, res) => {
             { header: "Địa Chỉ", key: "address", width: 30 }
         ];
 
-        // Thêm dữ liệu sinh viên vào bảng
         students.forEach(student => {
             worksheet.addRow(student);
         });
 
-        // Định dạng tiêu đề cột (chữ in đậm)
-        worksheet.getRow(1).eachCell(cell => {
-            cell.font = { bold: true };
-        });
-
-        // Xuất file Excel
         res.setHeader('Content-Disposition', 'attachment; filename=students.xlsx');
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
         const buffer = await workbook.xlsx.writeBuffer();
         res.send(buffer);
+
+        logger.info("Xuất file Excel thành công!");
     } catch (err) {
+        logger.error(`Lỗi khi xuất Excel: ${err.message}`);
         res.status(500).json({ error: "Lỗi khi xuất Excel!" });
     }
 });
@@ -161,38 +191,41 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Lấy danh sách sinh viên
+// Lấy danh sách sinh viên + logger
 router.get('/students', async (req, res) => {
     try {
         const students = await Student.find({});
+        logger.info('Lấy danh sách sinh viên thành công.');
         res.json(students);
     } catch (err) {
+        logger.error(`Lỗi khi lấy danh sách sinh viên: ${err.message}`);
         res.status(500).json({ error: err.message });
     }
 });
 
-// Thêm sinh viên
+// Thêm sinh viên + logger
 router.post('/students', async (req, res) => {
     try {
         const student = new Student(req.body);
         await student.save();
+        logger.info(`Thêm sinh viên mới: ${student.name} (MSSV: ${student.studentId})`);
         res.status(201).json({ message: 'Sinh viên đã được thêm!', student });
     } catch (err) {
-        if (err.code === 11000) {
-            return res.status(400).json({ error: 'Email bị trùng' });
-        }
+        logger.error(`Lỗi khi thêm sinh viên: ${err.message}`);
         res.status(400).json({ error: err.message });
     }
 });
 
-// Cập nhật sinh viên
+// Cập nhật sinh viên + Logger
 router.put('/students/:id', async (req, res) => {
     try {
         const studentId = req.params.id;
+        logger.info(`Yêu cầu cập nhật sinh viên có ID: ${studentId}`);
 
         // Kiểm tra xem sinh viên có tồn tại không
         const existingStudent = await Student.findById(studentId);
         if (!existingStudent) {
+            logger.warn(`Không tìm thấy sinh viên có ID: ${studentId}`);
             return res.status(404).json({ error: 'Không tìm thấy sinh viên!' });
         }
 
@@ -203,24 +236,27 @@ router.put('/students/:id', async (req, res) => {
         });
 
         if (!updatedStudent) {
+            logger.error(`Cập nhật thất bại cho sinh viên có ID: ${studentId}`);
             return res.status(500).json({ error: 'Cập nhật thất bại, vui lòng thử lại!' });
         }
 
+        logger.info(`Cập nhật thành công sinh viên: ${updatedStudent.name} (ID: ${studentId})`);
         res.json({ message: 'Cập nhật thành công!', student: updatedStudent });
 
     } catch (err) {
-        console.error("Lỗi khi cập nhật sinh viên:", err);
+        logger.error(`Lỗi khi cập nhật sinh viên có ID ${req.params.id}: ${err.message}`);
         res.status(500).json({ error: 'Lỗi khi cập nhật sinh viên!' });
     }
 });
 
-
-// Xóa sinh viên
+// Xóa sinh viên + Logger
 router.delete('/students/:id', async (req, res) => {
     try {
         await Student.findByIdAndDelete(req.params.id);
+        logger.info(`Xóa sinh viên có ID: ${req.params.id}`);
         res.json({ message: 'Sinh viên đã bị xóa!' });
     } catch (err) {
+        logger.error(`Lỗi khi xóa sinh viên: ${err.message}`);
         res.status(500).json({ error: err.message });
     }
 });
