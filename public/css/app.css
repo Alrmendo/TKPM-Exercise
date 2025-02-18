@@ -7,3 +7,25 @@
 body {
   box-sizing: border-box;
 }
+
+#filter-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  z-index: 10;
+}
+
+#filter-dropdown a {
+  display: block;
+  padding: 8px;
+  color: #333;
+  text-decoration: none;
+}
+
+#filter-dropdown a:hover {
+  background-color: #f0f0f0;
+}

@@ -93,6 +93,13 @@
     <!-- Tìm kiếm sinh viên -->
     <section class="bg-white p-6 rounded shadow-md mb-6">
         <h2 class="text-lg font-bold mb-4">Tìm Kiếm Sinh Viên</h2>
+        <select id="search-department" class="w-full border border-gray-300 rounded px-3 py-2 mb-4">
+            <option value="">Chọn Khoa...</option>
+            {{#each departments}}
+            <option value="{{this}}">{{this}}</option>
+            {{/each}}
+        </select>
+        
         <input type="text" id="search-input" class="w-full border border-gray-300 rounded px-3 py-2 mb-4"
             placeholder="Nhập MSSV hoặc Họ Tên...">
     </section>
@@ -436,6 +443,60 @@
         });
     });
 
+    // Tìm kiếm sinh viên theo Khoa
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('search-input');
+        const searchDepartment = document.getElementById('search-department');
+        const tableBody = document.getElementById('student-table-body');
+
+        function filterStudents() {
+            const searchText = searchInput.value.toLowerCase().trim();
+            const departmentText = searchDepartment.value.toLowerCase().trim();
+
+            Array.from(tableBody.children).forEach(row => {
+                const studentId = row.children[0].textContent.toLowerCase();
+                const studentName = row.children[1].textContent.toLowerCase();
+                const studentDepartment = row.children[4].textContent.toLowerCase();
+
+                const matchIdOrName = searchText === "" || studentId.includes(searchText) || studentName.includes(searchText);
+                const matchDepartment = departmentText === "" || studentDepartment === departmentText;
+
+                row.style.display = matchIdOrName && matchDepartment ? '' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterStudents);
+        searchDepartment.addEventListener('change', filterStudents);
+    });
+
+    async function loadDepartments() {
+        try {
+            const response = await fetch('/config'); // Gọi API lấy danh sách khoa
+            const config = await response.json();
+
+            if (!config.departments || config.departments.length === 0) {
+                console.error('Danh sách khoa rỗng!');
+                return;
+            }
+
+            const departmentSelect = document.getElementById('search-department');
+            departmentSelect.innerHTML = '<option value="">Chọn Khoa...</option>'; // Xóa dữ liệu cũ
+
+            config.departments.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept;
+                option.textContent = dept;
+                departmentSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Lỗi tải danh sách khoa:', error);
+        }
+    }
+
+    // Gọi hàm này khi trang tải
+    document.addEventListener('DOMContentLoaded', loadDepartments);
+
+
     // Thêm sinh viên vào bảng
     function addStudentRow(student) {
         const newRow = document.createElement('tr');
@@ -601,6 +662,7 @@
     }
 
     async function removeOption(type) {
+        // Lấy ID của dropdown dựa trên loại (Khoa, Tình trạng sinh viên, Chương trình đào tạo)
         const selectElement = type === "Khoa" ? "student-department"
             : type === "Tình trạng sinh viên" ? "student-status"
                 : "student-program";
@@ -616,10 +678,11 @@
 
         // Xác nhận việc xóa
         if (!confirm(`Bạn có chắc chắn muốn xóa ${type}: "${selectedValue}"?`)) {
-            return;
+            return; // Dừng nếu người dùng không xác nhận
         }
 
         try {
+            // Lấy cấu hình hiện tại từ server
             const response = await fetch('/config');
             let config = await response.json();
 
@@ -632,6 +695,7 @@
                 config.programs = config.programs.filter(item => item !== selectedValue);
             }
 
+            // Lưu lại cấu hình đã thay đổi
             await fetch('/config', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -639,7 +703,7 @@
             });
 
             alert(`${type} "${selectedValue}" đã được xóa!`);
-            loadConfigOptions();
+            loadConfigOptions(); // Tải lại danh sách sau khi xóa
         } catch (error) {
             console.error(`Lỗi khi xóa ${type}:`, error);
         }
