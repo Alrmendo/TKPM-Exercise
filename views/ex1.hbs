@@ -29,25 +29,30 @@
                     <option value="Nữ">Nữ</option>
                 </select>
             </div>
-            <div>
-                <label for="student-department" class="block font-medium">Khoa</label>
-                <select id="student-department" class="w-full border border-gray-300 rounded px-3 py-2" required>
-                    <option value="">Chọn</option>
-                    <option value="Khoa Luật">Khoa Luật</option>
-                    <option value="Khoa Tiếng Anh thương mại">Khoa Tiếng Anh thương mại</option>
-                    <option value="Khoa Tiếng Nhật">Khoa Tiếng Nhật</option>
-                    <option value="Khoa Tiếng Pháp">Khoa Tiếng Pháp</option>
-                </select>
+            <div class="flex flex-col w-full">
+                <label for="student-department" class="font-medium mb-1">Khoa</label>
+                <div class="flex items-center gap-2">
+                    <select id="student-department" class="w-full border border-gray-300 rounded px-3 py-2"
+                        required></select>
+                    <img src="/images/add-svgrepo-com.svg" alt="Thêm" class="w-6 h-6 cursor-pointer hover:opacity-80"
+                        onclick="addNewOption('Khoa')">
+                    <img src="/images/delete-svgrepo-com.svg" alt="Xóa" class="w-6 h-6 cursor-pointer hover:opacity-80"
+                        onclick="removeOption('Khoa')">
+                    <img src="/images/edit-1-svgrepo-com.svg" alt="Sửa" class="w-6 h-6 cursor-pointer hover:opacity-80"
+                        onclick="editOption('Khoa')">
+                </div>
             </div>
-            <div>
-                <label for="student-status" class="block font-medium">Tình trạng sinh viên</label>
-                <select id="student-status" class="w-full border border-gray-300 rounded px-3 py-2">
-                    <option value="">Chọn</option>
-                    <option value="Đang học">Đang học</option>
-                    <option value="Đã tốt nghiệp">Đã tốt nghiệp</option>
-                    <option value="Đã thôi học">Đã thôi học</option>
-                    <option value="Tạm dừng học">Tạm dừng học</option>
-                </select>
+            <div class="flex flex-col w-full">
+                <label for="student-status" class="font-medium mb-1">Tình trạng sinh viên</label>
+                <div class="flex items-center gap-2">
+                    <select id="student-status" class="w-full border border-gray-300 rounded px-3 py-2"></select>
+                    <img src="/images/add-svgrepo-com.svg" alt="Thêm" class="w-6 h-6 cursor-pointer hover:opacity-80"
+                        onclick="addNewOption('Tình trạng sinh viên')">
+                    <img src="/images/delete-svgrepo-com.svg" alt="Xóa" class="w-6 h-6 cursor-pointer hover:opacity-80"
+                        onclick="removeOption('Tình trạng sinh viên')">
+                    <img src="/images/edit-1-svgrepo-com.svg" alt="Sửa" class="w-6 h-6 cursor-pointer hover:opacity-80"
+                        onclick="editOption('Tình trạng sinh viên')">
+                </div>
             </div>
             <div>
                 <label for="student-email" class="block font-medium">Email</label>
@@ -62,10 +67,18 @@
                 <input type="text" id="student-course" class="w-full border border-gray-300 rounded px-3 py-2"
                     placeholder="VD: K22" required>
             </div>
-            <div>
-                <label for="student-program" class="block font-medium">Chương trình</label>
-                <input type="text" id="student-program" class="w-full border border-gray-300 rounded px-3 py-2"
-                    placeholder="VD: Chất lượng cao" required>
+            <div class="flex flex-col w-full">
+                <label for="student-program" class="font-medium mb-1">Chương trình đào tạo</label>
+                <div class="flex items-center gap-2">
+                    <select id="student-program" class="w-full border border-gray-300 rounded px-3 py-2"
+                        required></select>
+                    <img src="/images/add-svgrepo-com.svg" alt="Thêm" class="w-6 h-6 cursor-pointer hover:opacity-80"
+                        onclick="addNewOption('Chương trình đào tạo')">
+                    <img src="/images/delete-svgrepo-com.svg" alt="Xóa" class="w-6 h-6 cursor-pointer hover:opacity-80"
+                        onclick="removeOption('Chương trình đào tạo')">
+                    <img src="/images/edit-1-svgrepo-com.svg" alt="Sửa" class="w-6 h-6 cursor-pointer hover:opacity-80"
+                        onclick="editOption('Chương trình đào tạo')">
+                </div>
             </div>
             <div class="md:col-span-2">
                 <label for="student-address" class="block font-medium">Địa chỉ</label>
@@ -102,7 +115,7 @@
                         <th class="border px-3 py-2">Khóa</th>
                         <th class="border px-3 py-2">Chương Trình</th>
                         <th class="border px-3 py-2">Địa Chỉ</th>
-                        <th class="border px-6 py-2">Chỉnh sửa</th>
+                        <th class="border px-7 py-2">Chỉnh sửa</th>
                     </tr>
                 </thead>
                 <tbody id="student-table-body">
@@ -175,11 +188,7 @@
             <div>
                 <label for="edit-student-department" class="block font-medium">Khoa</label>
                 <select id="edit-student-department" class="w-full border border-gray-300 rounded px-3 py-2" required>
-                    <option value="">Chọn</option>
-                    <option value="Khoa Luật">Khoa Luật</option>
-                    <option value="Khoa Tiếng Anh thương mại">Khoa Tiếng Anh thương mại</option>
-                    <option value="Khoa Tiếng Nhật">Khoa Tiếng Nhật</option>
-                    <option value="Khoa Tiếng Pháp">Khoa Tiếng Pháp</option>
+                    <!-- Các options sẽ được cập nhật từ danh sách cấu hình -->
                 </select>
             </div>
 
@@ -187,11 +196,7 @@
             <div>
                 <label for="edit-student-status" class="block font-medium">Tình trạng sinh viên</label>
                 <select id="edit-student-status" class="w-full border border-gray-300 rounded px-3 py-2">
-                    <option value="">Chọn</option>
-                    <option value="Đang học">Đang học</option>
-                    <option value="Đã tốt nghiệp">Đã tốt nghiệp</option>
-                    <option value="Đã thôi học">Đã thôi học</option>
-                    <option value="Tạm dừng học">Tạm dừng học</option>
+                    <!-- Các options sẽ được cập nhật từ danh sách cấu hình -->
                 </select>
             </div>
 
@@ -219,8 +224,9 @@
             <!-- Chương trình -->
             <div>
                 <label for="edit-student-program" class="block font-medium">Chương trình</label>
-                <input type="text" id="edit-student-program" class="w-full border border-gray-300 rounded px-3 py-2"
-                    placeholder="VD: Chất lượng cao">
+                <select id="edit-student-program" class="w-full border border-gray-300 rounded px-3 py-2" required>
+                    <!-- Các options sẽ được cập nhật từ danh sách cấu hình -->
+                </select>
             </div>
 
             <!-- Địa chỉ -->
@@ -335,7 +341,7 @@
 
     // Mở modal chỉnh sửa sinh viên
     function editStudent(student) {
-        document.getElementById('edit-student-db-id').value = student._id;  // Gán ID MongoDB vào input ẩn
+        document.getElementById('edit-student-db-id').value = student._id;
         document.getElementById('edit-student-id').value = student.studentId;
         document.getElementById('edit-student-name').value = student.name;
         document.getElementById('edit-student-birthdate').value = student.birthdate || "";
@@ -345,9 +351,10 @@
         document.getElementById('edit-student-email').value = student.email;
         document.getElementById('edit-student-phone').value = student.phone || "";
         document.getElementById('edit-student-course').value = student.course || "";
-        document.getElementById('edit-student-program').value = student.program || "";
         document.getElementById('edit-student-address').value = student.address || "";
+        document.getElementById('edit-student-program').value = student.program || "";
 
+        // Mở modal
         document.getElementById('edit-modal').classList.remove('hidden');
     }
 
@@ -457,4 +464,187 @@
     }
     // Load danh sách khi trang được mở
     document.addEventListener('DOMContentLoaded', loadStudentsFromAPI);
+
+    // Lấy danh sách department, status, program từ server
+    async function loadConfigOptions() {
+        try {
+            const response = await fetch('/config');
+            const config = await response.json();
+
+            // Lọc và cập nhật các select
+            populateSelectOptions("student-department", config.departments);
+            populateSelectOptions("student-status", config.statuses);
+            populateSelectOptions("student-program", config.programs);
+
+            // Cập nhật các trường trong modal chỉnh sửa
+            populateSelectOptions("edit-student-department", config.departments);
+            populateSelectOptions("edit-student-status", config.statuses);
+            populateSelectOptions("edit-student-program", config.programs);
+
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách cấu hình:", error);
+        }
+    }
+
+    // Hàm để đổ dữ liệu vào select
+    function populateSelectOptions(selectId, options) {
+        const selectElement = document.getElementById(selectId);
+        selectElement.innerHTML = ""; // Xóa các tùy chọn cũ
+
+        options.forEach(option => {
+            const newOption = document.createElement("option");
+            newOption.value = option;
+            newOption.textContent = option;
+
+            // Kiểm tra xem giá trị hiện tại của select có trùng với option không
+            if (selectElement.value === option) {
+                newOption.selected = true;
+            }
+
+            selectElement.appendChild(newOption);
+        });
+
+        // Sau khi thêm, chọn mục mới
+        if (options.length > 0) {
+            selectElement.value = options[options.length - 1]; // Chọn mục cuối cùng vừa thêm
+        }
+    }
+
+    // Hàm thêm mới Department, Status, Program
+    async function addNewOption(type) {
+        const newValue = prompt(`Nhập ${type} mới:`).trim();
+        if (!newValue) return;
+
+        try {
+            const response = await fetch('/config');
+            let config = await response.json();
+
+            // Thêm giá trị mới vào danh sách
+            if (type === "Khoa" && !config.departments.includes(newValue)) {
+                config.departments.push(newValue);
+            }
+            if (type === "Tình trạng sinh viên" && !config.statuses.includes(newValue)) {
+                config.statuses.push(newValue);
+            }
+            if (type === "Chương trình đào tạo" && !config.programs.includes(newValue)) {
+                config.programs.push(newValue);
+            }
+
+            // Lưu lại vào cấu hình
+            await fetch('/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(config),
+            });
+
+            // Thông báo thành công và tải lại danh sách cấu hình
+            alert(`${type} đã được thêm!`);
+            loadConfigOptions(); // Tải lại danh sách sau khi cập nhật
+
+            // Sau khi load lại danh sách, chọn giá trị mới tự động
+            const selectElement = document.getElementById(`student-${type.toLowerCase().replace(" ", "-")}`);
+            selectElement.value = newValue; // Chọn giá trị mới vào select
+
+        } catch (error) {
+            console.error(`Lỗi khi thêm ${type}:`, error);
+        }
+    }
+
+    // Gọi hàm load config khi trang tải
+    document.addEventListener('DOMContentLoaded', () => {
+        loadConfigOptions();
+        loadStudentsFromAPI();
+    });
+
+    // Hàm đổi tên một giá trị trong danh sách
+    async function editOption(type) {
+        const selectElement = type === "Khoa" ? "student-department"
+            : type === "Tình trạng sinh viên" ? "student-status"
+                : "student-program";
+
+        const oldValue = document.getElementById(selectElement).value;
+
+        if (!oldValue) {
+            alert(`Vui lòng chọn một ${type} để chỉnh sửa.`);
+            return;
+        }
+
+        const newValue = prompt(`Nhập tên mới cho ${type}:`, oldValue).trim();
+        if (!newValue || newValue === oldValue) return;
+
+        try {
+            const response = await fetch('/config');
+            let config = await response.json();
+
+            if (type === "Khoa") {
+                const index = config.departments.indexOf(oldValue);
+                if (index !== -1) config.departments[index] = newValue;
+            } else if (type === "Tình trạng sinh viên") {
+                const index = config.statuses.indexOf(oldValue);
+                if (index !== -1) config.statuses[index] = newValue;
+            } else if (type === "Chương trình đào tạo") {
+                const index = config.programs.indexOf(oldValue);
+                if (index !== -1) config.programs[index] = newValue;
+            }
+
+            await fetch('/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(config),
+            });
+
+            alert(`${type} đã được cập nhật!`);
+            loadConfigOptions(); // Tải lại danh sách sau khi cập nhật
+        } catch (error) {
+            console.error(`Lỗi khi cập nhật ${type}:`, error);
+        }
+    }
+
+    async function removeOption(type) {
+        // Lấy ID của dropdown dựa trên loại (Khoa, Tình trạng sinh viên, Chương trình đào tạo)
+        const selectElement = type === "Khoa" ? "student-department"
+            : type === "Tình trạng sinh viên" ? "student-status"
+                : "student-program";
+
+        // Lấy giá trị đã chọn từ dropdown
+        const selectedValue = document.getElementById(selectElement).value;
+
+        // Kiểm tra nếu không có giá trị nào được chọn
+        if (!selectedValue) {
+            alert(`Vui lòng chọn một ${type} để xóa.`);
+            return;
+        }
+
+        // Xác nhận việc xóa
+        if (!confirm(`Bạn có chắc chắn muốn xóa ${type}: "${selectedValue}"?`)) {
+            return; // Dừng nếu người dùng không xác nhận
+        }
+
+        try {
+            // Lấy cấu hình hiện tại từ server
+            const response = await fetch('/config');
+            let config = await response.json();
+
+            // Xóa giá trị đã chọn khỏi mảng tương ứng (Khoa, Tình trạng sinh viên, Chương trình đào tạo)
+            if (type === "Khoa") {
+                config.departments = config.departments.filter(item => item !== selectedValue);
+            } else if (type === "Tình trạng sinh viên") {
+                config.statuses = config.statuses.filter(item => item !== selectedValue);
+            } else if (type === "Chương trình đào tạo") {
+                config.programs = config.programs.filter(item => item !== selectedValue);
+            }
+
+            // Lưu lại cấu hình đã thay đổi
+            await fetch('/config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(config),
+            });
+
+            alert(`${type} "${selectedValue}" đã được xóa!`);
+            loadConfigOptions(); // Tải lại danh sách sau khi xóa
+        } catch (error) {
+            console.error(`Lỗi khi xóa ${type}:`, error);
+        }
+    }
 </script>
