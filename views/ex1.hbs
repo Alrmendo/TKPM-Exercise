@@ -4,6 +4,13 @@
     </div>
 </header>
 
+<section class="bg-gray-100 p-4 rounded flex justify-center">
+    <p class="text-sm text-gray-700 flex gap-2">
+        Phiên bản: <span id="app-version">Đang tải...</span> |
+        Ngày build: <span id="app-build-date">Đang tải...</span>
+    </p>
+</section>
+
 <main class="w-[95%] mx-auto px-1 py-6">
     <!-- Import/Export -->
     <section class="bg-white p-6 rounded shadow-md mb-6">
@@ -787,4 +794,18 @@
         alert(result.message || "Import thành công!");
         if (response.ok) location.reload();
     });
+
+    async function loadVersionInfo() {
+        try {
+            const response = await fetch('/version');
+            const data = await response.json();
+
+            document.getElementById('app-version').textContent = data.version || 'Không rõ';
+            document.getElementById('app-build-date').textContent = data.build_date || 'Không rõ';
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin version:", error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadVersionInfo);
 </script>
