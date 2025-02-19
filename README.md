@@ -10,7 +10,7 @@
    - [2.1. Các tính năng mới](#21-các-tính-năng-mới)  
    - [2.2. Hình ảnh minh chứng các tính năng mới](#22-hình-ảnh-minh-chứng-các-tính-năng-mới)  
      - [Kết nối cơ sở dữ liệu](#kết-nối-cơ-sở-dữ-liệu)  
-     - [Quản lý phòng ban](#quản-lý-phòng-ban)  
+     - [Quản lý khoa](#quản-lý-khoa)  
      - [Quản lý chương trình học](#quản-lý-chương-trình-học)  
      - [Quản lý trạng thái sinh viên](#quản-lý-trạng-thái-sinh-viên)  
      - [Xuất/Nhập dữ liệu](#xuấtnhập-dữ-liệu)  
@@ -78,27 +78,35 @@ Version 2.0 bổ sung nhiều tính năng quan trọng giúp cải thiện hiệ
 - **Thông tin sinh viên**:
   ![db_student](screenshots/version2.0/db_connection/db_student.png)
 
-#### **2. Quản lý phòng ban**
-- **Thêm phòng ban**:
+#### **2. Quản lý khoa**
+- **Thêm khoa**:
   ![add_department](screenshots/version2.0/department/add_new_department.png)
   
-- **Sửa phòng ban**:
+- **Sửa khoa**:
   ![edit_department](screenshots/version2.0/department/edit_department.png)
   
-- **Xóa phòng ban**:
+- **Xóa khoa**:
   ![delete_department](screenshots/version2.0/department/delete_department.png)
 
 #### **3. Quản lý chương trình học**
 - **Thêm chương trình**:
   ![add_new_program](screenshots/version2.0/program/add_new_program.png)
+
+- **Sửa chương trình**:
   ![edit_program](screenshots/version2.0/program/edit_program.png)
+
+- **Xoá chương trình**
   ![delete_program](screenshots/version2.0/program/delete_program.png)
 
 #### **4. Quản lý trạng thái sinh viên**
 - **Thêm trạng thái sinh viên**:
   ![add_new_student_status](screenshots/version2.0/student_status/add_new_student_status.png)
+
+- **Sửa trạng thái sinh viên**:
   ![edit_student_status](screenshots/version2.0/student_status/edit_student_status.png)
-  ![edit_student_status](screenshots/version2.0/student_status/delete_student_status.png)
+
+- **Xoá trạng thái sinh viên**:
+  ![delete_student_status](screenshots/version2.0/student_status/delete_student_status.png)
 
 #### **5. Xuất/Nhập dữ liệu**
 - **Giao diện xuất/nhập**:
@@ -174,9 +182,9 @@ Version 2.0 bổ sung nhiều tính năng quan trọng giúp cải thiện hiệ
 
 - **Mô tả**: Nhấn vào các nút để thực hiện thao tác, dấu cộng là thêm, dấu trù là xoá đi và bút chì là edit.
 - **Thao tác**:
-  - Thêm phòng ban: `add_new_department.png`
-  - Sửa phòng ban: `edit_department.png`
-  - Xóa phòng ban: `delete_department.png`
+  - Thêm khoa: `add_new_department.png`
+  - Sửa khoa: `edit_department.png`
+  - Xóa khoa: `delete_department.png`
 
 #### **3. Quản lý chương trình học**
 
