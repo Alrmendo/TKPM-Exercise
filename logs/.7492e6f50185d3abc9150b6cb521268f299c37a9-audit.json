@@ -9,6 +9,11 @@
             "date": 1739877032441,
             "name": "/Users/nguyentriet/Documents/GitHub/TKPM-Exercise/logs/application-2025-02-18.log",
             "hash": "10d9f3f9d14d3e7b69e8147cfb7eeb5b681e50ef908b874ede4ac01f3dc3280f"
+        },
+        {
+            "date": 1739950412427,
+            "name": "/Users/nguyentriet/Documents/GitHub/TKPM-Exercise/logs/application-2025-02-19.log",
+            "hash": "cdd3aaca700b22dfd280c205d1f2a99dec9675a9b95d64d92d5c5b752110f471"
         }
     ],
     "hashType": "sha256"
