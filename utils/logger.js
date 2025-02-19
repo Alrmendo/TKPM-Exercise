@@ -26,7 +26,7 @@ const logger = winston.createLogger({
     ]
 });
 
-// Hiển thị log debug
+// Hiển thị log debug, chưa ra production (tạm thời)
 if (process.env.NODE_ENV !== 'production') {
     logger.add(new winston.transports.Console({
         format: winston.format.simple()
