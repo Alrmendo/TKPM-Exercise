@@ -146,7 +146,13 @@
 
     <!-- Danh sách sinh viên -->
     <section class="bg-white p-6 rounded shadow-md">
-        <h2 class="text-lg font-bold mb-4">Danh Sách Sinh Viên</h2>
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-lg font-bold">Danh Sách Sinh Viên</h2>
+            <button id="delete-all-students" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+                Xóa Tất Cả Sinh Viên
+            </button>
+        </div>
+
         <div id="student-list" class="overflow-x-auto">
             <table class="min-w-full border border-gray-300 text-left text-[15px]">
                 <thead class="bg-gray-100">
@@ -657,7 +663,7 @@
         loadStudentsFromAPI();
     });
 
-    // Hàm đổi tên một giá trị trong danh sách
+    // Hàm edit Department, Status, Program
     async function editOption(type) {
         const selectElement = type === "Khoa" ? "student-department"
             : type === "Tình trạng sinh viên" ? "student-status"
@@ -701,6 +707,7 @@
         }
     }
 
+    // Hàm xoá Department, Status, Program
     async function removeOption(type) {
         // Lấy ID của dropdown dựa trên loại (Khoa, Tình trạng sinh viên, Chương trình đào tạo)
         const selectElement = type === "Khoa" ? "student-department"
@@ -749,6 +756,7 @@
         }
     }
 
+    //import and export
     document.getElementById('export-btn').addEventListener('click', () => {
         document.getElementById('export-popup').classList.remove('hidden');
     });
@@ -808,4 +816,22 @@
     }
 
     document.addEventListener('DOMContentLoaded', loadVersionInfo);
+
+    //Xoá tất cả sinh viên
+    document.getElementById('delete-all-students').addEventListener('click', async () => {
+        if (!confirm("Bạn có chắc chắn muốn xóa tất cả sinh viên?")) return;
+
+        try {
+            const response = await fetch('/students/delete-all', { method: 'DELETE' });
+
+            if (response.ok) {
+                alert('Tất cả sinh viên đã bị xóa!');
+                location.reload();
+            } else {
+                alert('Lỗi khi xóa sinh viên!');
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa tất cả sinh viên:", error);
+        }
+    });
 </script>
