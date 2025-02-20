@@ -17,22 +17,28 @@
         <h2 class="text-lg font-bold mb-4">Import/Export Dữ Liệu</h2>
 
         <div class="flex gap-4">
-            <button id="export-btn" class="bg-[#f60] text-white px-4 py-2 rounded">Export</button>
+            <button id="export-btn" class="bg-[#f60] text-white px-4 py-2 rounded hover:bg-[#e65100] cursor-pointer">
+                Export
+            </button>
         </div>
 
         <!-- Popup chọn loại export -->
         <div id="export-popup" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
             <div class="bg-white p-6 rounded shadow-lg w-80">
                 <h3 class="text-lg font-bold mb-4">Chọn định dạng xuất</h3>
-                <select id="export-type" class="w-full border border-gray-300 rounded px-3 py-2 mb-4">
+                <select id="export-type" class="w-full border border-gray-300 rounded px-3 py-2 mb-4 cursor-pointer">
                     <option value="json">JSON</option>
                     <option value="excel">Excel</option>
                 </select>
                 <div class="flex justify-end space-x-2">
                     <button id="cancel-export"
-                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Hủy</button>
+                        class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 cursor-pointer">
+                        Hủy
+                    </button>
                     <button id="confirm-export"
-                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">OK</button>
+                        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer">
+                        OK
+                    </button>
                 </div>
             </div>
         </div>
@@ -40,8 +46,10 @@
         <!-- Form nhập file -->
         <form id="import-form" enctype="multipart/form-data" class="mt-4 flex items-center gap-4">
             <input type="file" id="import-file" accept=".csv, .json, .xlsx"
-                class="border border-gray-300 rounded px-3 py-2">
-            <button type="submit" class="bg-[#117A65] text-white px-4 py-2 rounded">Import</button>
+                class="border border-gray-300 rounded px-3 py-2 cursor-pointer">
+            <button type="submit" class="bg-[#117A65] text-white px-4 py-2 rounded hover:bg-[#0f6659] cursor-pointer">
+                Import
+            </button>
         </form>
     </section>
 
@@ -125,7 +133,7 @@
                 <input type="text" id="student-address" class="w-full border border-gray-300 rounded px-3 py-2">
             </div>
             <div class="md:col-span-2 text-right">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Thêm</button>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer">Thêm</button>
             </div>
         </form>
     </section>
@@ -148,7 +156,7 @@
     <section class="bg-white p-6 rounded shadow-md">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-bold">Danh Sách Sinh Viên</h2>
-            <button id="delete-all-students" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">
+            <button id="delete-all-students" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 cursor-pointer">
                 Xóa Tất Cả Sinh Viên
             </button>
         </div>
