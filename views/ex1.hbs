@@ -133,7 +133,8 @@
                 <input type="text" id="student-address" class="w-full border border-gray-300 rounded px-3 py-2">
             </div>
             <div class="md:col-span-2 text-right">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer">Thêm</button>
+                <button type="submit"
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer">Thêm</button>
             </div>
         </form>
     </section>
@@ -156,7 +157,8 @@
     <section class="bg-white p-6 rounded shadow-md">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-bold">Danh Sách Sinh Viên</h2>
-            <button id="delete-all-students" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 cursor-pointer">
+            <button id="delete-all-students"
+                class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 cursor-pointer">
                 Xóa Tất Cả Sinh Viên
             </button>
         </div>
@@ -311,6 +313,15 @@
 <script>
     const tableBody = document.getElementById('student-table-body');
     const searchInput = document.getElementById('search-input');
+    const body = document.querySelector('body');
+
+    async function startLoading() {
+        body.classList.add('loading');
+    }
+
+    async function stopLoading() {
+        body.classList.remove('loading');
+    }
 
     // Load danh sách sinh viên từ MongoDB
     async function loadStudentsFromAPI() {
@@ -327,6 +338,7 @@
     // Thêm sinh viên mới
     document.getElementById('add-student-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+        startLoading();
 
         const newStudent = {
             studentId: document.getElementById('student-id').value.trim(),
@@ -379,6 +391,8 @@
             }
         } catch (error) {
             console.error("Lỗi khi thêm sinh viên:", error);
+        } finally {
+            stopLoading();
         }
     });
 
@@ -577,7 +591,6 @@
 
         tableBody.appendChild(newRow);
     }
-    // Load danh sách khi trang được mở
     document.addEventListener('DOMContentLoaded', loadStudentsFromAPI);
 
     // Lấy danh sách department, status, program từ server
@@ -766,24 +779,30 @@
 
     //import and export
     document.getElementById('export-btn').addEventListener('click', () => {
+        startLoading();
         document.getElementById('export-popup').classList.remove('hidden');
     });
 
     document.getElementById('cancel-export').addEventListener('click', () => {
+        stopLoading();
         document.getElementById('export-popup').classList.add('hidden');
     });
 
     document.getElementById('confirm-export').addEventListener('click', () => {
         const format = document.getElementById('export-type').value;
         window.location.href = `/export/${format}`;
+        stopLoading();
         document.getElementById('export-popup').classList.add('hidden');
     });
 
     document.getElementById('import-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+        startLoading();
+
         const fileInput = document.getElementById('import-file');
         if (!fileInput.files.length) {
             alert("Vui lòng chọn file!");
+            stopLoading();
             return;
         }
 
@@ -798,17 +817,24 @@
             endpoint = '/import/excel';
         } else {
             alert('Định dạng file không hợp lệ!');
+            stopLoading();
             return;
         }
 
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            body: formData
-        });
+        try {
+            const response = await fetch(endpoint, {
+                method: 'POST',
+                body: formData
+            });
 
-        const result = await response.json();
-        alert(result.message || "Import thành công!");
-        if (response.ok) location.reload();
+            const result = await response.json();
+            alert(result.message || "Import thành công!");
+            if (response.ok) location.reload();
+        } catch (error) {
+            console.error('Lỗi khi import:', error);
+        } finally {
+            stopLoading();
+        }
     });
 
     async function loadVersionInfo() {
@@ -828,6 +854,7 @@
     //Xoá tất cả sinh viên
     document.getElementById('delete-all-students').addEventListener('click', async () => {
         if (!confirm("Bạn có chắc chắn muốn xóa tất cả sinh viên?")) return;
+        startLoading();
 
         try {
             const response = await fetch('/students/delete-all', { method: 'DELETE' });
@@ -840,6 +867,8 @@
             }
         } catch (error) {
             console.error("Lỗi khi xóa tất cả sinh viên:", error);
+        } finally {
+            stopLoading();
         }
     });
 </script>
