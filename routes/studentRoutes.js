@@ -50,28 +50,43 @@ router.post('/import/excel', upload.single('file'), async (req, res) => {
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(req.file.path);
         const worksheet = workbook.worksheets[0];
+
         let importedCount = 0;
 
+        // Lấy hàng đầu tiên làm header
+        const headers = {};
+        worksheet.getRow(1).eachCell((cell, colNumber) => {
+            headers[cell.value] = colNumber;  // Lưu vị trí của từng cột theo tên
+        });
+
+        // Kiểm tra các header bắt buộc có tồn tại không
+        const requiredHeaders = ["MSSV", "Họ Tên", "Ngày Sinh", "Giới Tính", "Khoa", "Email"];
+        for (const header of requiredHeaders) {
+            if (!headers[header]) {
+                return res.status(400).json({ error: `Thiếu cột bắt buộc: ${header}` });
+            }
+        }
+
+        // Đọc dữ liệu từ hàng 2 trở đi
         for (let i = 2; i <= worksheet.rowCount; i++) {
             const row = worksheet.getRow(i);
             const studentData = {
-                studentId: row.getCell(1).value,
-                name: row.getCell(2).value,
-                birthdate: row.getCell(3).value,
-                gender: row.getCell(4).value,
-                department: row.getCell(5).value,
-                status: row.getCell(6).value,
-                email: row.getCell(7).value,
-                phone: row.getCell(8).value,
-                course: row.getCell(9).value,
-                program: row.getCell(10).value,
-                address: row.getCell(11).value
+                studentId: row.getCell(headers["MSSV"]).value,
+                name: row.getCell(headers["Họ Tên"]).value,
+                birthdate: row.getCell(headers["Ngày Sinh"])?.value || "",
+                gender: row.getCell(headers["Giới Tính"])?.value || "",
+                department: row.getCell(headers["Khoa"])?.value || "",
+                status: row.getCell(headers["Tình Trạng"])?.value || "",
+                email: row.getCell(headers["Email"]).value,
+                phone: row.getCell(headers["SĐT"])?.value || "",
+                course: row.getCell(headers["Khóa"])?.value || "",
+                program: row.getCell(headers["Chương Trình"])?.value || "",
+                address: row.getCell(headers["Địa Chỉ"])?.value || "",
             };
 
             const existingStudent = await Student.findOne({ studentId: studentData.studentId });
             if (existingStudent) {
                 await Student.updateOne({ studentId: studentData.studentId }, studentData);
-                // logger.info(`Cập nhật thông tin: MSSV ${studentData.studentId}`);
             } else {
                 await Student.create(studentData);
                 importedCount++;
