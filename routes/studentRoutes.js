@@ -230,6 +230,18 @@ router.post('/students', async (req, res) => {
     }
 });
 
+//Xoá tất cả sinh viên
+router.delete('/students/delete-all', async (req, res) => {
+    try {
+        await Student.deleteMany({});
+        logger.info("Đã xóa tất cả sinh viên.");
+        res.json({ message: "Tất cả sinh viên đã bị xóa!" });
+    } catch (err) {
+        logger.error(`Lỗi khi xóa tất cả sinh viên: ${err.message}`);
+        res.status(500).json({ error: "Lỗi khi xóa tất cả sinh viên!" });
+    }
+});
+
 // Cập nhật sinh viên + Logger
 router.put('/students/:id', async (req, res) => {
     try {
@@ -293,18 +305,5 @@ router.get('/version', (req, res) => {
         res.status(500).json({ error: 'Lỗi khi lấy thông tin phiên bản!' });
     }
 });
-
-//Xoá tất cả sinh viên
-router.delete('/students/delete-all', async (req, res) => {
-    try {
-        await Student.deleteMany({});
-        logger.info("Đã xóa tất cả sinh viên.");
-        res.json({ message: "Tất cả sinh viên đã bị xóa!" });
-    } catch (err) {
-        logger.error(`Lỗi khi xóa tất cả sinh viên: ${err.message}`);
-        res.status(500).json({ error: "Lỗi khi xóa tất cả sinh viên!" });
-    }
-});
-
 
 export default router;
