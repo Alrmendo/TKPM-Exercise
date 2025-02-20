@@ -3,3 +3,14 @@
 [2025-02-20 15:57:04] INFO: Lấy danh sách sinh viên thành công.
 [2025-02-20 15:57:10] ERROR: Lỗi khi xóa sinh viên: Cast to ObjectId failed for value "delete-all" (type string) at path "_id" for model "Student"
 [2025-02-20 15:57:16] ERROR: Lỗi khi xóa sinh viên: Cast to ObjectId failed for value "delete-all" (type string) at path "_id" for model "Student"
+[2025-02-20 16:03:41] INFO: Lấy thông tin version: {"version":"1.0.0","build_date":"2025-02-20"}
+[2025-02-20 16:03:41] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-20 16:03:41] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-20 16:03:46] INFO: Xóa sinh viên có ID: 67b4a0cb42dbf6b40eb84d8a
+[2025-02-20 16:03:47] INFO: Lấy thông tin version: {"version":"1.0.0","build_date":"2025-02-20"}
+[2025-02-20 16:03:47] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-20 16:03:47] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-20 16:03:51] INFO: Đã xóa tất cả sinh viên.
+[2025-02-20 16:03:52] INFO: Lấy thông tin version: {"version":"1.0.0","build_date":"2025-02-20"}
+[2025-02-20 16:03:52] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-20 16:03:52] INFO: Lấy danh sách sinh viên thành công.
