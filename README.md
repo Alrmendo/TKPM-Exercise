@@ -169,56 +169,6 @@ Version 2.0 bổ sung nhiều tính năng quan trọng giúp cải thiện hiệ
 
 ---
 
-### 2.3. Hướng dẫn sử dụng
-
-#### **1. Kết nối cơ sở dữ liệu**
-
-- **Mô tả**: Sử dụng MongoDB kết nối bằng link db và sử dụng cloudinary để lưu lại dữ liệu.
-- **Thao tác**:
-  - Cấu hình kết nối: `db_config.png`
-  - Quản lý sinh viên: `db_student.png`
-
-#### **2. Quản lý phòng ban**
-
-- **Mô tả**: Nhấn vào các nút để thực hiện thao tác, dấu cộng là thêm, dấu trù là xoá đi và bút chì là edit.
-- **Thao tác**:
-  - Thêm khoa: `add_new_department.png`
-  - Sửa khoa: `edit_department.png`
-  - Xóa khoa: `delete_department.png`
-
-#### **3. Quản lý chương trình học**
-
-- **Mô tả**: Nhấn vào các nút để thực hiện thao tác, dấu cộng là thêm, dấu trù là xoá đi và bút chì là edit.
-- **Thao tác**:
-  - Thêm chương trình: `add_new_program.png`
-  - Sửa chương trình: `edit_program.png`
-  - Xóa chương trình: `delete_program.png`
-
-#### **4. Quản lý trạng thái sinh viên**
-
-- **Mô tả**: Nhấn vào các nút để thực hiện thao tác, dấu cộng là thêm, dấu trù là xoá đi và bút chì là edit.
-- **Thao tác**:
-  - Thêm trạng thái: `add_new_student_status.png`
-  - Chỉnh sửa trạng thái: `edit_student_status.png`
-  - Xóa trạng thái: `delete_student_status.png`
-
-#### **5. Xuất/Nhập dữ liệu**
-
-- **Mô tả**: Nếu muốn xuất nhấn vào nút Export, chọn định dạng muốn xuất rồi nhấn oke. Còn nếu muốn nhập, chọn file sai đó nhấn import.
-- **Thao tác**:
-  - Chọn file nhập: `choose_file_to_import.png`
-  - Xuất dữ liệu: `export.png`
-  - Kiểm tra file xuất: `file_when_done_export.png`
-
-#### **6. Tìm kiếm nâng cao**
-
-- **Mô tả**: Chọn Khoa muốn lọc sẽ hiện ra khoa đó, thêm tên vào để lọc chính xác đối tượng.
-- **Thao tác**:
-  - Tìm theo phòng ban và tên: `search_by_department_and_name.png`
-  - Tìm theo phòng ban: `search_by_department.png`
-
----
-
 ## 3. Hướng dẫn cài đặt và chạy chương trình trên máy
 
 ### 3.1. Cấu trúc mã nguồn
