@@ -1,7 +1,7 @@
 # TKPM-EXERCISE
 
 # NOTE:
-- Do em tải file zip của project về và làm trên đó (xong em mới để qua file clone và commit lên) nên sẽ có vài file không giống như trong ảnh do em chụp bên file zip em download về. Em cảm ơn thầy ạ. 
+- Do lúc làm bài, em tải file zip của project về và làm trên đó (xong em mới để qua file clone và commit lên) nên sẽ có vài file (ví dụ như Log) dữ liệu ghi ra không giống như trong ảnh do em chụp bên file zip em download về. Em cảm ơn thầy ạ. 
 
 # Mục lục
 
