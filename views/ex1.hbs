@@ -53,6 +53,16 @@
         </form>
     </section>
 
+    <!--Nhập tên miền mới-->
+    <section class="bg-white p-6 rounded shadow-md mb-6">
+        <h2 class="text-lg font-bold mb-4">Cấu hình tên miền email hợp lệ</h2>
+        <input type="text" id="email-domain-input" class="border border-gray-300 rounded px-3 py-2"
+            placeholder="Nhập tên miền...">
+        <button id="add-email-domain" class="bg-blue-600 text-white px-4 py-2 rounded">Thêm</button>
+
+        <ul id="email-domain-list" class="mt-4"></ul>
+    </section>
+
     <!-- Form thêm sinh viên  -->
     <section class="bg-white p-6 rounded shadow-md mb-6">
         <h2 class="text-lg font-bold mb-4">Thêm Sinh Viên Mới</h2>
@@ -871,4 +881,46 @@
             stopLoading();
         }
     });
+
+    //EX3
+    document.getElementById('add-student-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const emailInput = document.getElementById('student-email').value.trim();
+        const response = await fetch('/config/email-domains');
+        const allowedDomains = await response.json();
+
+        if (!allowedDomains.some(domain => emailInput.endsWith(`@${domain}`))) {
+            return;
+        }
+
+        this.submit();
+    });
+
+    async function loadEmailDomains() {
+        const response = await fetch('/config/email-domains');
+        const allowedDomains = await response.json();
+        const list = document.getElementById('email-domain-list');
+        list.innerHTML = allowedDomains.map(domain => `<li>${domain}</li>`).join('');
+    }
+
+    document.getElementById('add-email-domain').addEventListener('click', async function () {
+        const newDomain = document.getElementById('email-domain-input').value.trim();
+        if (!newDomain) return alert('Vui lòng nhập tên miền hợp lệ.');
+
+        const response = await fetch('/config/email-domains', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ allowedEmailDomains: [newDomain] }) // Gửi dạng mảng
+        });
+
+        if (response.ok) {
+            alert('Tên miền đã được thêm!');
+            loadEmailDomains();
+        } else {
+            alert('Lỗi khi thêm tên miền!');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', loadEmailDomains);
 </script>
