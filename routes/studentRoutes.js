@@ -220,6 +220,14 @@ router.get('/students', async (req, res) => {
 // Thêm sinh viên + logger
 router.post('/students', async (req, res) => {
     try {
+        const { email } = req.body;
+        const config = await Config.findOne();
+        const allowedDomains = config ? config.allowedEmailDomains : [];
+
+        if (!allowedDomains.some(domain => email.endsWith(`@${domain}`))) {
+            return res.status(400).json({ error: `Email không thuộc tên miền được phép! (${allowedDomains.join(', ')})` });
+        }
+
         const student = new Student(req.body);
         await student.save();
         logger.info(`Thêm sinh viên mới: ${student.name} (MSSV: ${student.studentId})`);
@@ -303,6 +311,41 @@ router.get('/version', (req, res) => {
     } catch (err) {
         logger.error(`Lỗi khi lấy thông tin version: ${err.message}`);
         res.status(500).json({ error: 'Lỗi khi lấy thông tin phiên bản!' });
+    }
+});
+
+// Lấy danh sách tên miền email hợp lệ + Logger
+router.get('/config/email-domains', async (req, res) => {
+    try {
+        const config = await Config.findOne();
+        res.json(config ? config.allowedEmailDomains : []);
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi lấy danh sách tên miền email hợp lệ!" });
+    }
+});
+
+router.post('/config/email-domains', async (req, res) => {
+    try {
+        let config = await Config.findOne();
+        if (!config) {
+            config = new Config({});
+        }
+
+        const newDomains = req.body.allowedEmailDomains || [];
+
+        // Chỉ thêm những tên miền chưa tồn tại
+        newDomains.forEach(domain => {
+            if (!config.allowedEmailDomains.includes(domain)) {
+                config.allowedEmailDomains.push(domain);
+            }
+        });
+
+        await config.save();
+        logger.info(`Danh sách tên miền email sau khi cập nhật: ${config.allowedEmailDomains.join(', ')}`);
+        res.json({ message: "Cập nhật tên miền email thành công!", allowedEmailDomains: config.allowedEmailDomains });
+    } catch (err) {
+        logger.error(`Lỗi khi cập nhật danh sách tên miền email: ${err.message}`);
+        res.status(500).json({ error: "Lỗi khi cập nhật danh sách tên miền email!" });
     }
 });
 
