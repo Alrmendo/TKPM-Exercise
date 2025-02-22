@@ -1,2 +1,5 @@
 [2025-02-20 15:57:10] ERROR: Lỗi khi xóa sinh viên: Cast to ObjectId failed for value "delete-all" (type string) at path "_id" for model "Student"
 [2025-02-20 15:57:16] ERROR: Lỗi khi xóa sinh viên: Cast to ObjectId failed for value "delete-all" (type string) at path "_id" for model "Student"
+
+[2025-02-20 15:39:42] ERROR: Lỗi khi xóa sinh viên: Cast to ObjectId failed for value "delete-all" (type string) at path "_id" for model "Student"
+[2025-02-20 15:39:45] ERROR: Lỗi khi xóa sinh viên: Cast to ObjectId failed for value "delete-all" (type string) at path "_id" for model "Student"
