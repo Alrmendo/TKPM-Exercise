@@ -14,14 +14,27 @@ import fs from 'fs';
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
-// Import JSON + Logger
+// Import JSON + Logger + kiểm tra email
 router.post('/import/json', upload.single('file'), async (req, res) => {
     try {
-        logger.info(`Import JSON bắt đầu: ${req.file.originalname}`);
+        logger.info(`Bắt đầu import file JSON: ${req.file.originalname}`);
         const data = JSON.parse(fs.readFileSync(req.file.path, 'utf-8'));
 
+        // Lấy danh sách tên miền hợp lệ từ Config
+        const config = await Config.findOne();
+        const allowedDomains = config ? config.allowedEmailDomains : [];
+
         let importedCount = 0;
+        let skippedCount = 0;
+        let invalidEmails = [];
+
         for (const student of data) {
+            if (!allowedDomains.some(domain => student.email.endsWith(`@${domain}`))) {
+                invalidEmails.push(student.email);
+                skippedCount++;
+                continue; // Bỏ qua sinh viên có email không hợp lệ
+            }
+
             const existingStudent = await Student.findOne({ studentId: student.studentId });
             if (existingStudent) {
                 // Nếu MSSV đã tồn tại, cập nhật thông tin
@@ -34,15 +47,19 @@ router.post('/import/json', upload.single('file'), async (req, res) => {
             }
         }
 
-        logger.info(`Import JSON hoàn tất: ${importedCount} sinh viên mới.`);
-        res.json({ message: `Import thành công! ${importedCount} sinh viên mới được thêm.` });
+        logger.info(`Import JSON hoàn tất: ${importedCount} sinh viên mới, ${skippedCount} bị bỏ qua.`);
+
+        res.json({
+            message: `Import hoàn tất! ${importedCount} sinh viên mới được thêm, ${skippedCount} sinh viên bị bỏ qua.`,
+            invalidEmails
+        });
     } catch (err) {
         logger.error(`Lỗi khi import JSON: ${err.message}`);
         res.status(500).json({ error: "Lỗi khi import JSON!" });
     }
 });
 
-// Import Excel + Logger
+// Import Excel + Logger + kiểm tra email
 router.post('/import/excel', upload.single('file'), async (req, res) => {
     try {
         logger.info(`Bắt đầu import file Excel: ${req.file.originalname}`);
@@ -50,8 +67,12 @@ router.post('/import/excel', upload.single('file'), async (req, res) => {
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(req.file.path);
         const worksheet = workbook.worksheets[0];
+        const config = await Config.findOne();
+        const allowedDomains = config ? config.allowedEmailDomains : [];
 
         let importedCount = 0;
+        let skippedCount = 0;
+        let invalidEmails = [];
 
         // Lấy hàng đầu tiên làm header
         const headers = {};
@@ -84,6 +105,12 @@ router.post('/import/excel', upload.single('file'), async (req, res) => {
                 address: row.getCell(headers["Địa Chỉ"])?.value || "",
             };
 
+            if (!allowedDomains.some(domain => studentData.email.endsWith(`@${domain}`))) {
+                invalidEmails.push(studentData.email);
+                skippedCount++;
+                continue; // Bỏ qua nếu email không hợp lệ
+            }
+
             const existingStudent = await Student.findOne({ studentId: studentData.studentId });
             if (existingStudent) {
                 await Student.updateOne({ studentId: studentData.studentId }, studentData);
@@ -93,8 +120,11 @@ router.post('/import/excel', upload.single('file'), async (req, res) => {
             }
         }
 
-        logger.info(`Import Excel hoàn tất: ${importedCount} sinh viên mới.`);
-        res.json({ message: `Import thành công! ${importedCount} sinh viên mới được thêm.` });
+        logger.info(`Import Excel hoàn tất: ${importedCount} sinh viên mới, ${skippedCount} bị bỏ qua.`);
+        res.json({
+            message: `Import hoàn tất! ${importedCount} sinh viên mới được thêm, ${skippedCount} sinh viên bị bỏ qua.`,
+            invalidEmails
+        });
     } catch (err) {
         logger.error(`Lỗi khi import Excel: ${err.message}`);
         res.status(500).json({ error: "Lỗi khi import Excel!" });
@@ -250,11 +280,21 @@ router.delete('/students/delete-all', async (req, res) => {
     }
 });
 
-// Cập nhật sinh viên + Logger
+// Cập nhật thông tin sinh viên, kiểm tra tên miền email + Logger
 router.put('/students/:id', async (req, res) => {
     try {
+        const { email } = req.body;
         const studentId = req.params.id;
-        logger.info(`Yêu cầu cập nhật sinh viên có ID: ${studentId}`);
+
+        // Lấy danh sách tên miền email hợp lệ từ config
+        const config = await Config.findOne();
+        const allowedDomains = config ? config.allowedEmailDomains : [];
+
+        // Kiểm tra email có nằm trong danh sách tên miền hợp lệ không
+        if (!allowedDomains.some(domain => email.endsWith(`@${domain}`))) {
+            logger.warn(`Email không hợp lệ khi chỉnh sửa: ${email} (Chỉ chấp nhận: ${allowedDomains.join(', ')})`);
+            return res.status(400).json({ error: `Email không thuộc tên miền được cho phép! (${allowedDomains.join(', ')})` });
+        }
 
         // Kiểm tra xem sinh viên có tồn tại không
         const existingStudent = await Student.findById(studentId);
@@ -274,7 +314,7 @@ router.put('/students/:id', async (req, res) => {
             return res.status(500).json({ error: 'Cập nhật thất bại, vui lòng thử lại!' });
         }
 
-        logger.info(`Cập nhật thành công sinh viên: ${updatedStudent.name} (ID: ${studentId})`);
+        logger.info(`Cập nhật thành công sinh viên: ${updatedStudent.name} (ID: ${studentId}, Email: ${updatedStudent.email})`);
         res.json({ message: 'Cập nhật thành công!', student: updatedStudent });
 
     } catch (err) {
