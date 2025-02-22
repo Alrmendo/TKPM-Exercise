@@ -839,6 +839,9 @@
 
             const result = await response.json();
             alert(result.message || "Import thành công!");
+            if (result.invalidEmails && result.invalidEmails.length > 0) {
+                alert(`Các email không hợp lệ bị bỏ qua:\n${result.invalidEmails.join('\n')}`);
+            }
             if (response.ok) location.reload();
         } catch (error) {
             console.error('Lỗi khi import:', error);
@@ -923,4 +926,18 @@
     });
 
     document.addEventListener('DOMContentLoaded', loadEmailDomains);
+
+    document.getElementById('edit-student-form').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const emailInput = document.getElementById('edit-student-email').value.trim();
+        const response = await fetch('/config/email-domains');
+        const allowedDomains = await response.json();
+
+        if (!allowedDomains.some(domain => emailInput.endsWith(`@${domain}`))) {
+            return;
+        }
+
+        this.submit();
+    });
 </script>
