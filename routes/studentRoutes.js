@@ -92,7 +92,7 @@ router.post('/import/excel', upload.single('file'), async (req, res) => {
                 logger.warn(`Bỏ qua sinh viên ở dòng ${i} - Email không hợp lệ: ${email}`);
                 continue; // Bỏ qua sinh viên có email sai
             }
-            
+
             const studentData = {
                 studentId: row.getCell(headers["MSSV"]).value,
                 name: row.getCell(headers["Họ Tên"]).value,
@@ -272,6 +272,59 @@ router.delete('/config/email-domains/:domain', async (req, res) => {
     }
 });
 
+// Lấy danh sách mã quốc gia hợp lệ
+router.get('/config/phone-codes', async (req, res) => {
+    try {
+        let config = await Config.findOne();
+        if (!config) {
+            config = await Config.create({});
+        }
+        res.json(config.phoneCountryCodes);
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi lấy danh sách mã quốc gia!" });
+    }
+});
+
+// Thêm mã quốc gia mới
+router.post('/config/phone-codes', async (req, res) => {
+    try {
+        const { code } = req.body;
+        if (!code || !code.startsWith('+')) return res.status(400).json({ error: "Mã quốc gia không hợp lệ!" });
+
+        let config = await Config.findOne();
+        if (!config) {
+            config = await Config.create({});
+        }
+
+        if (!config.phoneCountryCodes.includes(code)) {
+            config.phoneCountryCodes.push(code);
+            await config.save();
+        }
+
+        res.json({ message: "Đã thêm mã quốc gia!", phoneCountryCodes: config.phoneCountryCodes });
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi thêm mã quốc gia!" });
+    }
+});
+
+// Xóa mã quốc gia
+router.delete('/config/phone-codes/:code', async (req, res) => {
+    try {
+        const codeToRemove = req.params.code;
+        let config = await Config.findOne();
+        if (!config) {
+            config = await Config.create({});
+        }
+
+        config.phoneCountryCodes = config.phoneCountryCodes.filter(code => code !== codeToRemove);
+        await config.save();
+
+        res.json({ message: "Đã xóa mã quốc gia!", phoneCountryCodes: config.phoneCountryCodes });
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi xóa mã quốc gia!" });
+    }
+});
+
 // Hiển thị danh sách sinh viên
 router.get('/', async (req, res) => {
     try {
@@ -299,16 +352,22 @@ router.get('/students', async (req, res) => {
 // Thêm sinh viên + logger
 router.post('/students', async (req, res) => {
     try {
-        const { email } = req.body;
+        const { email, phone } = req.body;
 
         // Lấy danh sách domain hợp lệ từ cấu hình
         let config = await Config.findOne();
         const allowedDomains = config?.allowedEmailDomains || [];
+        const allowedPhoneCodes = config?.phoneCountryCodes || [];
 
         // Kiểm tra email có đúng domain không
         const emailDomain = email.split('@').pop();
         if (!allowedDomains.includes(emailDomain)) {
             return res.status(400).json({ error: "Email phải thuộc tên miền hợp lệ!" });
+        }
+
+        // Kiểm tra số điện thoại hợp lệ
+        if (!allowedPhoneCodes.some(code => phone.startsWith(code))) {
+            return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
         }
 
         const student = new Student(req.body);
@@ -337,7 +396,7 @@ router.delete('/students/delete-all', async (req, res) => {
 router.put('/students/:id', async (req, res) => {
     try {
         const studentId = req.params.id;
-        const { email } = req.body;
+        const { email, phone } = req.body;
 
         logger.info(`Yêu cầu cập nhật sinh viên có ID: ${studentId}`);
 
@@ -351,11 +410,17 @@ router.put('/students/:id', async (req, res) => {
         // Lấy danh sách domain hợp lệ
         let config = await Config.findOne();
         const allowedDomains = config?.allowedEmailDomains || [];
+        const allowedPhoneCodes = config?.phoneCountryCodes || [];
 
         // Kiểm tra email có đúng domain không
         const emailDomain = email.split('@').pop();
         if (!allowedDomains.includes(emailDomain)) {
             return res.status(400).json({ error: `Email phải thuộc tên miền hợp lệ: ${allowedDomains.join(', ')}` });
+        }
+        
+        // Kiểm tra số điện thoại hợp lệ
+        if (!allowedPhoneCodes.some(code => phone.startsWith(code))) {
+            return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
         }
 
         // Cập nhật thông tin sinh viên

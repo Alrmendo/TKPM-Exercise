@@ -62,6 +62,14 @@
         <ul id="email-domain-list" class="mt-4"></ul>
     </section>
 
+    <section class="bg-white p-6 rounded shadow-md mb-6">
+        <h2 class="text-lg font-bold mb-4">Cấu hình mã quốc gia hợp lệ</h2>
+        <input type="text" id="phone-code-input" class="border border-gray-300 rounded px-3 py-2"
+            placeholder="Nhập mã quốc gia...">
+        <button id="add-phone-code" class="bg-blue-600 text-white px-4 py-2 rounded">Thêm</button>
+        <ul id="phone-code-list" class="mt-4"></ul>
+    </section>
+
     <!-- Form thêm sinh viên  -->
     <section class="bg-white p-6 rounded shadow-md mb-6">
         <h2 class="text-lg font-bold mb-4">Thêm Sinh Viên Mới</h2>
@@ -396,10 +404,82 @@
     document.getElementById('add-email-domain').addEventListener('click', addEmailDomain);
     document.addEventListener('DOMContentLoaded', loadEmailDomains);
 
+    async function loadPhoneCodes() {
+        try {
+            const response = await fetch('/config/phone-codes');
+            const phoneCodes = await response.json();
+            const list = document.getElementById('phone-code-list');
+            list.innerHTML = phoneCodes.map(code =>
+                `<li class="flex justify-between items-center border-b py-2">
+                    ${code}
+                    <button onclick="removePhoneCode('${code}')" class="bg-red-500 text-white px-2 py-1 rounded">
+                        Xóa
+                    </button>
+                </li>`
+            ).join('');
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách mã quốc gia:", error);
+        }
+    }
+
+    async function addPhoneCode() {
+        const input = document.getElementById('phone-code-input');
+        const code = input.value.trim();
+
+        if (!code.startsWith('+')) {
+            alert("Mã quốc gia phải bắt đầu bằng dấu '+'. Ví dụ: +84");
+            return;
+        }
+
+        try {
+            const response = await fetch('/config/phone-codes', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+
+            if (response.ok) {
+                input.value = "";
+                loadPhoneCodes();
+            } else {
+                alert("Lỗi khi thêm mã quốc gia!");
+            }
+        } catch (error) {
+            console.error("Lỗi khi thêm mã quốc gia:", error);
+        }
+    }
+
+    async function removePhoneCode(code) {
+        if (!confirm(`Bạn có chắc chắn muốn xóa mã quốc gia "${code}"?`)) return;
+
+        try {
+            const response = await fetch(`/config/phone-codes/${code}`, { method: 'DELETE' });
+
+            if (response.ok) {
+                loadPhoneCodes();
+            } else {
+                alert("Lỗi khi xóa mã quốc gia!");
+            }
+        } catch (error) {
+            console.error("Lỗi khi xóa mã quốc gia:", error);
+        }
+    }
+
+    document.getElementById('add-phone-code').addEventListener('click', addPhoneCode);
+    document.addEventListener('DOMContentLoaded', loadPhoneCodes);
+
+    async function validatePhoneNumber(phone) {
+        const response = await fetch('/config/phone-codes');
+        const allowedPhoneCodes = await response.json();
+
+        return allowedPhoneCodes.some(code => phone.startsWith(code));
+    }
+
     document.getElementById('add-student-form').addEventListener('submit', async (e) => {
         e.preventDefault();
 
         const email = document.getElementById('student-email').value.trim();
+        const phone = document.getElementById('student-phone').value.trim();
 
         // Lấy danh sách domain hợp lệ từ server
         const response = await fetch('/config');
@@ -409,6 +489,11 @@
         const emailDomain = email.split('@').pop();
         if (!allowedDomains.includes(emailDomain)) {
             alert(`Email phải thuộc các tên miền: ${allowedDomains.join(", ")}`);
+            return;
+        }
+
+        if (!(await validatePhoneNumber(phone))) {
+            alert("Số điện thoại không hợp lệ! Vui lòng nhập số điện thoại bắt đầu bằng mã quốc gia hợp lệ.");
             return;
         }
 
