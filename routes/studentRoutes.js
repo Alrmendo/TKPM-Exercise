@@ -14,25 +14,21 @@ import fs from 'fs';
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
 
-// Import JSON + Logger + kiểm tra email
+// Import JSON + Logger
 router.post('/import/json', upload.single('file'), async (req, res) => {
     try {
-        logger.info(`Bắt đầu import file JSON: ${req.file.originalname}`);
+        logger.info(`Import JSON bắt đầu: ${req.file.originalname}`);
         const data = JSON.parse(fs.readFileSync(req.file.path, 'utf-8'));
 
-        // Lấy danh sách tên miền hợp lệ từ Config
-        const config = await Config.findOne();
-        const allowedDomains = config ? config.allowedEmailDomains : [];
-
         let importedCount = 0;
-        let skippedCount = 0;
-        let invalidEmails = [];
+        let config = await Config.findOne();
+        const allowedDomains = config?.allowedEmailDomains || [];
 
         for (const student of data) {
-            if (!allowedDomains.some(domain => student.email.endsWith(`@${domain}`))) {
-                invalidEmails.push(student.email);
-                skippedCount++;
-                continue; // Bỏ qua sinh viên có email không hợp lệ
+            const emailDomain = student.email.split('@').pop();
+            if (!allowedDomains.includes(emailDomain)) {
+                logger.warn(`Bỏ qua sinh viên ${student.name} - Email không hợp lệ: ${student.email}`);
+                continue; // Bỏ qua sinh viên có email sai
             }
 
             const existingStudent = await Student.findOne({ studentId: student.studentId });
@@ -47,19 +43,15 @@ router.post('/import/json', upload.single('file'), async (req, res) => {
             }
         }
 
-        logger.info(`Import JSON hoàn tất: ${importedCount} sinh viên mới, ${skippedCount} bị bỏ qua.`);
-
-        res.json({
-            message: `Import hoàn tất! ${importedCount} sinh viên mới được thêm, ${skippedCount} sinh viên bị bỏ qua.`,
-            invalidEmails
-        });
+        logger.info(`Import JSON hoàn tất: ${importedCount} sinh viên mới.`);
+        res.json({ message: `Import thành công! ${importedCount} sinh viên mới được thêm.` });
     } catch (err) {
         logger.error(`Lỗi khi import JSON: ${err.message}`);
         res.status(500).json({ error: "Lỗi khi import JSON!" });
     }
 });
 
-// Import Excel + Logger + kiểm tra email
+// Import Excel + Logger
 router.post('/import/excel', upload.single('file'), async (req, res) => {
     try {
         logger.info(`Bắt đầu import file Excel: ${req.file.originalname}`);
@@ -67,18 +59,20 @@ router.post('/import/excel', upload.single('file'), async (req, res) => {
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(req.file.path);
         const worksheet = workbook.worksheets[0];
-        const config = await Config.findOne();
-        const allowedDomains = config ? config.allowedEmailDomains : [];
 
         let importedCount = 0;
-        let skippedCount = 0;
-        let invalidEmails = [];
+        let config = await Config.findOne();
+        const allowedDomains = config?.allowedEmailDomains || [];
 
         // Lấy hàng đầu tiên làm header
         const headers = {};
         worksheet.getRow(1).eachCell((cell, colNumber) => {
             headers[cell.value] = colNumber;  // Lưu vị trí của từng cột theo tên
         });
+
+        if (!headers["Email"]) {
+            return res.status(400).json({ error: "Thiếu cột bắt buộc: Email" });
+        }
 
         // Kiểm tra các header bắt buộc có tồn tại không
         const requiredHeaders = ["MSSV", "Họ Tên", "Ngày Sinh", "Giới Tính", "Khoa", "Email"];
@@ -91,6 +85,14 @@ router.post('/import/excel', upload.single('file'), async (req, res) => {
         // Đọc dữ liệu từ hàng 2 trở đi
         for (let i = 2; i <= worksheet.rowCount; i++) {
             const row = worksheet.getRow(i);
+            const email = row.getCell(headers["Email"]).value;
+            const emailDomain = email.split('@').pop();
+
+            if (!allowedDomains.includes(emailDomain)) {
+                logger.warn(`Bỏ qua sinh viên ở dòng ${i} - Email không hợp lệ: ${email}`);
+                continue; // Bỏ qua sinh viên có email sai
+            }
+            
             const studentData = {
                 studentId: row.getCell(headers["MSSV"]).value,
                 name: row.getCell(headers["Họ Tên"]).value,
@@ -105,12 +107,6 @@ router.post('/import/excel', upload.single('file'), async (req, res) => {
                 address: row.getCell(headers["Địa Chỉ"])?.value || "",
             };
 
-            if (!allowedDomains.some(domain => studentData.email.endsWith(`@${domain}`))) {
-                invalidEmails.push(studentData.email);
-                skippedCount++;
-                continue; // Bỏ qua nếu email không hợp lệ
-            }
-
             const existingStudent = await Student.findOne({ studentId: studentData.studentId });
             if (existingStudent) {
                 await Student.updateOne({ studentId: studentData.studentId }, studentData);
@@ -120,11 +116,8 @@ router.post('/import/excel', upload.single('file'), async (req, res) => {
             }
         }
 
-        logger.info(`Import Excel hoàn tất: ${importedCount} sinh viên mới, ${skippedCount} bị bỏ qua.`);
-        res.json({
-            message: `Import hoàn tất! ${importedCount} sinh viên mới được thêm, ${skippedCount} sinh viên bị bỏ qua.`,
-            invalidEmails
-        });
+        logger.info(`Import Excel hoàn tất: ${importedCount} sinh viên mới.`);
+        res.json({ message: `Import thành công! ${importedCount} sinh viên mới được thêm.` });
     } catch (err) {
         logger.error(`Lỗi khi import Excel: ${err.message}`);
         res.status(500).json({ error: "Lỗi khi import Excel!" });
@@ -215,11 +208,67 @@ router.post('/config', async (req, res) => {
         if (req.body.programs) {
             config.programs = req.body.programs;
         }
+        if (req.body.allowedEmailDomains) {
+            config.allowedEmailDomains = req.body.allowedEmailDomains;
+        }
 
         await config.save();
         res.json({ message: "Cập nhật thành công!", config });
     } catch (err) {
         res.status(500).json({ error: "Lỗi khi cập nhật danh sách cấu hình!" });
+    }
+});
+
+// Lấy danh sách tên miền email hợp lệ
+router.get('/config/email-domains', async (req, res) => {
+    try {
+        let config = await Config.findOne();
+        if (!config) {
+            config = await Config.create({});
+        }
+        res.json(config.allowedEmailDomains);
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi lấy danh sách tên miền email!" });
+    }
+});
+
+// Thêm tên miền email mới
+router.post('/config/email-domains', async (req, res) => {
+    try {
+        const { domain } = req.body;
+        if (!domain) return res.status(400).json({ error: "Tên miền không hợp lệ!" });
+
+        let config = await Config.findOne();
+        if (!config) {
+            config = await Config.create({});
+        }
+
+        if (!config.allowedEmailDomains.includes(domain)) {
+            config.allowedEmailDomains.push(domain);
+            await config.save();
+        }
+
+        res.json({ message: "Đã thêm tên miền!", allowedEmailDomains: config.allowedEmailDomains });
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi thêm tên miền email!" });
+    }
+});
+
+// Xóa tên miền email
+router.delete('/config/email-domains/:domain', async (req, res) => {
+    try {
+        const domainToRemove = req.params.domain;
+        let config = await Config.findOne();
+        if (!config) {
+            config = await Config.create({});
+        }
+
+        config.allowedEmailDomains = config.allowedEmailDomains.filter(domain => domain !== domainToRemove);
+        await config.save();
+
+        res.json({ message: "Đã xóa tên miền!", allowedEmailDomains: config.allowedEmailDomains });
+    } catch (err) {
+        res.status(500).json({ error: "Lỗi khi xóa tên miền email!" });
     }
 });
 
@@ -251,11 +300,15 @@ router.get('/students', async (req, res) => {
 router.post('/students', async (req, res) => {
     try {
         const { email } = req.body;
-        const config = await Config.findOne();
-        const allowedDomains = config ? config.allowedEmailDomains : [];
 
-        if (!allowedDomains.some(domain => email.endsWith(`@${domain}`))) {
-            return res.status(400).json({ error: `Email không thuộc tên miền được phép! (${allowedDomains.join(', ')})` });
+        // Lấy danh sách domain hợp lệ từ cấu hình
+        let config = await Config.findOne();
+        const allowedDomains = config?.allowedEmailDomains || [];
+
+        // Kiểm tra email có đúng domain không
+        const emailDomain = email.split('@').pop();
+        if (!allowedDomains.includes(emailDomain)) {
+            return res.status(400).json({ error: "Email phải thuộc tên miền hợp lệ!" });
         }
 
         const student = new Student(req.body);
@@ -280,27 +333,29 @@ router.delete('/students/delete-all', async (req, res) => {
     }
 });
 
-// Cập nhật thông tin sinh viên, kiểm tra tên miền email + Logger
+// Cập nhật sinh viên + Logger
 router.put('/students/:id', async (req, res) => {
     try {
-        const { email } = req.body;
         const studentId = req.params.id;
+        const { email } = req.body;
 
-        // Lấy danh sách tên miền email hợp lệ từ config
-        const config = await Config.findOne();
-        const allowedDomains = config ? config.allowedEmailDomains : [];
-
-        // Kiểm tra email có nằm trong danh sách tên miền hợp lệ không
-        if (!allowedDomains.some(domain => email.endsWith(`@${domain}`))) {
-            logger.warn(`Email không hợp lệ khi chỉnh sửa: ${email} (Chỉ chấp nhận: ${allowedDomains.join(', ')})`);
-            return res.status(400).json({ error: `Email không thuộc tên miền được cho phép! (${allowedDomains.join(', ')})` });
-        }
+        logger.info(`Yêu cầu cập nhật sinh viên có ID: ${studentId}`);
 
         // Kiểm tra xem sinh viên có tồn tại không
         const existingStudent = await Student.findById(studentId);
         if (!existingStudent) {
             logger.warn(`Không tìm thấy sinh viên có ID: ${studentId}`);
             return res.status(404).json({ error: 'Không tìm thấy sinh viên!' });
+        }
+
+        // Lấy danh sách domain hợp lệ
+        let config = await Config.findOne();
+        const allowedDomains = config?.allowedEmailDomains || [];
+
+        // Kiểm tra email có đúng domain không
+        const emailDomain = email.split('@').pop();
+        if (!allowedDomains.includes(emailDomain)) {
+            return res.status(400).json({ error: `Email phải thuộc tên miền hợp lệ: ${allowedDomains.join(', ')}` });
         }
 
         // Cập nhật thông tin sinh viên
@@ -314,7 +369,7 @@ router.put('/students/:id', async (req, res) => {
             return res.status(500).json({ error: 'Cập nhật thất bại, vui lòng thử lại!' });
         }
 
-        logger.info(`Cập nhật thành công sinh viên: ${updatedStudent.name} (ID: ${studentId}, Email: ${updatedStudent.email})`);
+        logger.info(`Cập nhật thành công sinh viên: ${updatedStudent.name} (ID: ${studentId})`);
         res.json({ message: 'Cập nhật thành công!', student: updatedStudent });
 
     } catch (err) {
@@ -351,41 +406,6 @@ router.get('/version', (req, res) => {
     } catch (err) {
         logger.error(`Lỗi khi lấy thông tin version: ${err.message}`);
         res.status(500).json({ error: 'Lỗi khi lấy thông tin phiên bản!' });
-    }
-});
-
-// Lấy danh sách tên miền email hợp lệ + Logger
-router.get('/config/email-domains', async (req, res) => {
-    try {
-        const config = await Config.findOne();
-        res.json(config ? config.allowedEmailDomains : []);
-    } catch (err) {
-        res.status(500).json({ error: "Lỗi khi lấy danh sách tên miền email hợp lệ!" });
-    }
-});
-
-router.post('/config/email-domains', async (req, res) => {
-    try {
-        let config = await Config.findOne();
-        if (!config) {
-            config = new Config({});
-        }
-
-        const newDomains = req.body.allowedEmailDomains || [];
-
-        // Chỉ thêm những tên miền chưa tồn tại
-        newDomains.forEach(domain => {
-            if (!config.allowedEmailDomains.includes(domain)) {
-                config.allowedEmailDomains.push(domain);
-            }
-        });
-
-        await config.save();
-        logger.info(`Danh sách tên miền email sau khi cập nhật: ${config.allowedEmailDomains.join(', ')}`);
-        res.json({ message: "Cập nhật tên miền email thành công!", allowedEmailDomains: config.allowedEmailDomains });
-    } catch (err) {
-        logger.error(`Lỗi khi cập nhật danh sách tên miền email: ${err.message}`);
-        res.status(500).json({ error: "Lỗi khi cập nhật danh sách tên miền email!" });
     }
 });
 
