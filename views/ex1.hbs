@@ -53,7 +53,6 @@
         </form>
     </section>
 
-    <!--Nhập tên miền mới-->
     <section class="bg-white p-6 rounded shadow-md mb-6">
         <h2 class="text-lg font-bold mb-4">Cấu hình tên miền email hợp lệ</h2>
         <input type="text" id="email-domain-input" class="border border-gray-300 rounded px-3 py-2"
@@ -345,6 +344,78 @@
         }
     }
 
+    async function loadEmailDomains() {
+        const response = await fetch('/config/email-domains');
+        const allowedDomains = await response.json();
+        const list = document.getElementById('email-domain-list');
+        list.innerHTML = allowedDomains.map(domain =>
+            `<li class="flex justify-between items-center border-b py-2">
+                ${domain}
+                <button onclick="removeEmailDomain('${domain}')" class="bg-red-500 text-white px-2 py-1 rounded">
+                    Xóa
+                </button>
+            </li>`
+        ).join('');
+    }
+
+    async function addEmailDomain() {
+        const input = document.getElementById('email-domain-input');
+        const domain = input.value.trim();
+
+        if (!domain) {
+            alert("Vui lòng nhập tên miền!");
+            return;
+        }
+
+        const response = await fetch('/config/email-domains', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ domain })
+        });
+
+        if (response.ok) {
+            input.value = "";
+            loadEmailDomains();
+        } else {
+            alert("Lỗi khi thêm tên miền!");
+        }
+    }
+
+    async function removeEmailDomain(domain) {
+        if (!confirm(`Bạn có chắc chắn muốn xóa tên miền "${domain}"?`)) return;
+
+        const response = await fetch(`/config/email-domains/${domain}`, { method: 'DELETE' });
+
+        if (response.ok) {
+            loadEmailDomains();
+        } else {
+            alert("Lỗi khi xóa tên miền!");
+        }
+    }
+
+    document.getElementById('add-email-domain').addEventListener('click', addEmailDomain);
+    document.addEventListener('DOMContentLoaded', loadEmailDomains);
+
+    document.getElementById('add-student-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById('student-email').value.trim();
+
+        // Lấy danh sách domain hợp lệ từ server
+        const response = await fetch('/config');
+        const config = await response.json();
+        const allowedDomains = config.allowedEmailDomains || [];
+
+        const emailDomain = email.split('@').pop();
+        if (!allowedDomains.includes(emailDomain)) {
+            alert(`Email phải thuộc các tên miền: ${allowedDomains.join(", ")}`);
+            return;
+        }
+
+        // Nếu hợp lệ, tiếp tục gửi form
+        e.target.submit();
+    });
+
     // Thêm sinh viên mới
     document.getElementById('add-student-form').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -448,11 +519,31 @@
         document.getElementById('edit-modal').classList.add('hidden');
     });
 
-    // Cập nhật sinh viên
+
     document.getElementById('edit-student-form').addEventListener('submit', async function (event) {
         event.preventDefault();
 
         const studentId = document.getElementById('edit-student-db-id').value; // Lấy _id của MongoDB
+        const email = document.getElementById('edit-student-email').value.trim();
+
+        // Lấy danh sách domain hợp lệ từ server
+        try {
+            const response = await fetch('/config');
+            const config = await response.json();
+            const allowedDomains = config.allowedEmailDomains || [];
+            const emailDomain = email.split('@').pop();
+
+            if (!allowedDomains.includes(emailDomain)) {
+                alert(`Email phải thuộc các tên miền hợp lệ: ${allowedDomains.join(", ")}`);
+                return;
+            }
+        } catch (error) {
+            console.error("Lỗi khi lấy danh sách tên miền email:", error);
+            alert('Không thể kiểm tra tên miền email. Vui lòng thử lại!');
+            return;
+        }
+
+        // Tạo đối tượng dữ liệu cập nhật
         const updatedStudent = {
             studentId: document.getElementById('edit-student-id').value.trim(),
             name: document.getElementById('edit-student-name').value.trim(),
@@ -460,18 +551,24 @@
             gender: document.getElementById('edit-student-gender').value,
             department: document.getElementById('edit-student-department').value,
             status: document.getElementById('edit-student-status').value,
-            email: document.getElementById('edit-student-email').value.trim(),
+            email: email,
             phone: document.getElementById('edit-student-phone').value.trim(),
             course: document.getElementById('edit-student-course').value.trim(),
             program: document.getElementById('edit-student-program').value.trim(),
             address: document.getElementById('edit-student-address').value.trim(),
         };
 
-        // Kiểm tra trùng MSSV (ngoại trừ MSSV cũ)
-        const response = await fetch('/students');
-        const students = await response.json();
-        if (students.some(student => student.studentId === updatedStudent.studentId && student._id !== studentId)) {
-            alert('Mã số sinh viên đã tồn tại!');
+        // Kiểm tra MSSV không trùng lặp (ngoại trừ MSSV cũ)
+        try {
+            const response = await fetch('/students');
+            const students = await response.json();
+            if (students.some(student => student.studentId === updatedStudent.studentId && student._id !== studentId)) {
+                alert('Mã số sinh viên đã tồn tại!');
+                return;
+            }
+        } catch (error) {
+            console.error("Lỗi khi kiểm tra MSSV:", error);
+            alert('Không thể kiểm tra mã số sinh viên. Vui lòng thử lại!');
             return;
         }
 
@@ -489,6 +586,7 @@
             return;
         }
 
+        // Gửi request cập nhật sinh viên
         try {
             const response = await fetch(`/students/${studentId}`, {
                 method: 'PUT',
@@ -506,10 +604,9 @@
             }
         } catch (error) {
             console.error("Lỗi khi cập nhật sinh viên:", error);
-            alert('Có lỗi xảy ra khi cập nhật!');
+            alert('⚠️ Có lỗi xảy ra khi cập nhật!');
         }
     });
-
 
     // Tìm kiếm sinh viên theo MSSV hoặc tên
     searchInput.addEventListener('input', function () {
@@ -839,9 +936,6 @@
 
             const result = await response.json();
             alert(result.message || "Import thành công!");
-            if (result.invalidEmails && result.invalidEmails.length > 0) {
-                alert(`Các email không hợp lệ bị bỏ qua:\n${result.invalidEmails.join('\n')}`);
-            }
             if (response.ok) location.reload();
         } catch (error) {
             console.error('Lỗi khi import:', error);
@@ -883,61 +977,5 @@
         } finally {
             stopLoading();
         }
-    });
-
-    //EX3
-    document.getElementById('add-student-form').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const emailInput = document.getElementById('student-email').value.trim();
-        const response = await fetch('/config/email-domains');
-        const allowedDomains = await response.json();
-
-        if (!allowedDomains.some(domain => emailInput.endsWith(`@${domain}`))) {
-            return;
-        }
-
-        this.submit();
-    });
-
-    async function loadEmailDomains() {
-        const response = await fetch('/config/email-domains');
-        const allowedDomains = await response.json();
-        const list = document.getElementById('email-domain-list');
-        list.innerHTML = allowedDomains.map(domain => `<li>${domain}</li>`).join('');
-    }
-
-    document.getElementById('add-email-domain').addEventListener('click', async function () {
-        const newDomain = document.getElementById('email-domain-input').value.trim();
-        if (!newDomain) return alert('Vui lòng nhập tên miền hợp lệ.');
-
-        const response = await fetch('/config/email-domains', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ allowedEmailDomains: [newDomain] }) // Gửi dạng mảng
-        });
-
-        if (response.ok) {
-            alert('Tên miền đã được thêm!');
-            loadEmailDomains();
-        } else {
-            alert('Lỗi khi thêm tên miền!');
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', loadEmailDomains);
-
-    document.getElementById('edit-student-form').addEventListener('submit', async function (event) {
-        event.preventDefault();
-
-        const emailInput = document.getElementById('edit-student-email').value.trim();
-        const response = await fetch('/config/email-domains');
-        const allowedDomains = await response.json();
-
-        if (!allowedDomains.some(domain => emailInput.endsWith(`@${domain}`))) {
-            return;
-        }
-
-        this.submit();
     });
 </script>
