@@ -70,6 +70,23 @@
         <ul id="phone-code-list" class="mt-4"></ul>
     </section>
 
+    <section class="bg-white p-6 rounded shadow-md mb-6">
+        <h2 class="text-lg font-bold mb-4">Cấu hình quy tắc thay đổi trạng thái sinh viên</h2>
+        <div class="mb-4">
+            <label for="current-status" class="block font-medium">Chọn trạng thái hiện tại</label>
+            <select id="current-status" class="w-full border border-gray-300 rounded px-3 py-2">
+                <!-- Tự động load danh sách trạng thái -->
+            </select>
+        </div>
+        <div class="mb-4">
+            <label for="next-status" class="block font-medium">Trạng thái có thể chuyển đổi</label>
+            <input type="text" id="next-status" class="border border-gray-300 rounded px-3 py-2"
+                placeholder="Nhập trạng thái mới...">
+            <button id="add-status-rule" class="bg-blue-600 text-white px-4 py-2 rounded">Thêm</button>
+        </div>
+        <ul id="status-rule-list" class="mt-4"></ul>
+    </section>
+
     <!-- Form thêm sinh viên  -->
     <section class="bg-white p-6 rounded shadow-md mb-6">
         <h2 class="text-lg font-bold mb-4">Thêm Sinh Viên Mới</h2>
@@ -468,6 +485,86 @@
     document.getElementById('add-phone-code').addEventListener('click', addPhoneCode);
     document.addEventListener('DOMContentLoaded', loadPhoneCodes);
 
+    async function loadStatusRules() {
+        const response = await fetch('/config');
+        const config = await response.json();
+        const statusRules = config.statusRules || {};
+        const statusSelect = document.getElementById('current-status');
+        const ruleList = document.getElementById('status-rule-list');
+
+        // Xóa dữ liệu cũ
+        statusSelect.innerHTML = "";
+        ruleList.innerHTML = "";
+
+        // Đổ trạng thái vào dropdown
+        Object.keys(statusRules).forEach(status => {
+            const option = document.createElement("option");
+            option.value = status;
+            option.textContent = status;
+            statusSelect.appendChild(option);
+        });
+
+        // Hiển thị danh sách quy tắc
+        Object.entries(statusRules).forEach(([currentStatus, nextStatuses]) => {
+            const li = document.createElement("li");
+            li.className = "flex justify-between items-center border-b py-2";
+            li.innerHTML = `<span>${currentStatus} → ${nextStatuses.join(", ") || "Không thể chuyển đổi"}</span>
+                <button class="bg-red-500 text-white px-2 py-1 rounded" onclick="removeStatusRule('${currentStatus}')">Xóa</button>`;
+            ruleList.appendChild(li);
+        });
+    }
+
+    async function addStatusRule() {
+        const currentStatus = document.getElementById("current-status").value;
+        const nextStatus = document.getElementById("next-status").value.trim();
+
+        if (!nextStatus) {
+            alert("Vui lòng nhập trạng thái mới!");
+            return;
+        }
+
+        const response = await fetch('/config');
+        let config = await response.json();
+
+        if (!config.statusRules[currentStatus]) {
+            config.statusRules[currentStatus] = [];
+        }
+
+        if (!config.statusRules[currentStatus].includes(nextStatus)) {
+            config.statusRules[currentStatus].push(nextStatus);
+        }
+
+        await fetch('/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(config),
+        });
+
+        alert("Thêm quy tắc thành công!");
+        loadStatusRules();
+    }
+
+    async function removeStatusRule(status) {
+        if (!confirm(`Bạn có chắc chắn muốn xóa quy tắc của trạng thái "${status}"?`)) return;
+
+        const response = await fetch('/config');
+        let config = await response.json();
+
+        delete config.statusRules[status];
+
+        await fetch('/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(config),
+        });
+
+        alert("Xóa quy tắc thành công!");
+        loadStatusRules();
+    }
+
+    document.getElementById('add-status-rule').addEventListener('click', addStatusRule);
+    document.addEventListener('DOMContentLoaded', loadStatusRules);
+
     async function validatePhoneNumber(phone) {
         const response = await fetch('/config/phone-codes');
         const allowedPhoneCodes = await response.json();
@@ -604,6 +701,36 @@
         document.getElementById('edit-modal').classList.add('hidden');
     });
 
+    async function loadStatusOptions() {
+        const response = await fetch('/config');
+        const config = await response.json();
+        const statusRules = config.statusRules;
+
+        const studentTableRows = document.querySelectorAll('#student-table-body tr');
+
+        studentTableRows.forEach(row => {
+            const studentStatusCell = row.children[5]; // Cột trạng thái
+            const studentId = row.children[0].textContent;
+            const editButton = row.querySelector('button.bg-green-500');
+
+            editButton.addEventListener('click', async () => {
+                const currentStatus = studentStatusCell.textContent;
+                const allowedNextStatuses = statusRules[currentStatus] || [];
+
+                const statusSelect = document.getElementById('edit-student-status');
+                statusSelect.innerHTML = '';
+
+                allowedNextStatuses.forEach(status => {
+                    const option = document.createElement('option');
+                    option.value = status;
+                    option.textContent = status;
+                    statusSelect.appendChild(option);
+                });
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadStatusOptions);
 
     document.getElementById('edit-student-form').addEventListener('submit', async function (event) {
         event.preventDefault();

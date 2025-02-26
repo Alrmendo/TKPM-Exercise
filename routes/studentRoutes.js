@@ -397,6 +397,7 @@ router.put('/students/:id', async (req, res) => {
     try {
         const studentId = req.params.id;
         const { email, phone } = req.body;
+        const { status } = req.body;
 
         logger.info(`Yêu cầu cập nhật sinh viên có ID: ${studentId}`);
 
@@ -411,16 +412,23 @@ router.put('/students/:id', async (req, res) => {
         let config = await Config.findOne();
         const allowedDomains = config?.allowedEmailDomains || [];
         const allowedPhoneCodes = config?.phoneCountryCodes || [];
+        const statusRules = config?.statusRules || {};
 
         // Kiểm tra email có đúng domain không
         const emailDomain = email.split('@').pop();
         if (!allowedDomains.includes(emailDomain)) {
             return res.status(400).json({ error: `Email phải thuộc tên miền hợp lệ: ${allowedDomains.join(', ')}` });
         }
-        
+
         // Kiểm tra số điện thoại hợp lệ
         if (!allowedPhoneCodes.some(code => phone.startsWith(code))) {
             return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
+        }
+
+        // Kiểm tra xem trạng thái mới có hợp lệ không
+        const allowedNextStatuses = statusRules[existingStudent.status] || [];
+        if (!allowedNextStatuses.includes(status)) {
+            return res.status(400).json({ error: `Không thể đổi từ "${existingStudent.status}" sang "${status}"!` });
         }
 
         // Cập nhật thông tin sinh viên
