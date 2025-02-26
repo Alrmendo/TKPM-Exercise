@@ -5,7 +5,17 @@ const configSchema = new mongoose.Schema({
     statuses: { type: [String], default: ["Đang học", "Đã tốt nghiệp", "Đã thôi học", "Tạm dừng học"] },
     programs: { type: [String], default: ["Chất lượng cao", "Đại trà"] },
     allowedEmailDomains: { type: [String], default: ["student.university.edu.vn"] },
-    phoneCountryCodes: { type: [String], default: ["+84", "03", "05", "07", "08", "09"] }
+    phoneCountryCodes: { type: [String], default: ["+84", "03", "05", "07", "08", "09"] },
+    statusRules: {
+        type: Map,
+        of: [String],
+        default: {
+            "Đang học": ["Bảo lưu", "Tốt nghiệp", "Đình chỉ"],
+            "Bảo lưu": ["Đang học"],
+            "Tốt nghiệp": [],
+            "Đình chỉ": []
+        }
+    }
 });
 
 const Config = mongoose.model('Config', configSchema);
