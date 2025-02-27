@@ -1,5 +1,5 @@
 [2025-02-20 15:57:10] ERROR: Lỗi khi xóa sinh viên: Cast to ObjectId failed for value "delete-all" (type string) at path "_id" for model "Student"
 [2025-02-20 15:57:16] ERROR: Lỗi khi xóa sinh viên: Cast to ObjectId failed for value "delete-all" (type string) at path "_id" for model "Student"
-
-[2025-02-20 15:39:42] ERROR: Lỗi khi xóa sinh viên: Cast to ObjectId failed for value "delete-all" (type string) at path "_id" for model "Student"
-[2025-02-20 15:39:45] ERROR: Lỗi khi xóa sinh viên: Cast to ObjectId failed for value "delete-all" (type string) at path "_id" for model "Student"
+[2025-02-26 14:37:36] ERROR: Lỗi khi cập nhật sinh viên có ID 67b9e39af45f0e4c95148a63: Cannot access 'statusRules' before initialization
+[2025-02-26 14:47:47] ERROR: Lỗi khi cập nhật sinh viên có ID 67b9e39af45f0e4c95148a63: Cannot access 'config' before initialization
+[2025-02-27 15:53:28] ERROR: Lỗi khi cập nhật sinh viên có ID 67b9e39af45f0e4c95148a63: Cannot access 'allowedNextStatuses' before initialization
