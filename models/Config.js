@@ -10,10 +10,8 @@ const configSchema = new mongoose.Schema({
         type: Map,
         of: [String],
         default: {
-            "Đang học": ["Bảo lưu", "Tốt nghiệp", "Đình chỉ"],
-            "Bảo lưu": ["Đang học"],
-            "Tốt nghiệp": [],
-            "Đình chỉ": []
+            "Đang học": ["Bảo lưu", "Đã tốt nghiệp", "Đình chỉ"],
+            "Đã tốt nghiệp": [],
         }
     }
 });

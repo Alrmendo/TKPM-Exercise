@@ -396,8 +396,7 @@ router.delete('/students/delete-all', async (req, res) => {
 router.put('/students/:id', async (req, res) => {
     try {
         const studentId = req.params.id;
-        const { email, phone } = req.body;
-        const { status } = req.body;
+        const { email, phone, status } = req.body;
 
         logger.info(`Yêu cầu cập nhật sinh viên có ID: ${studentId}`);
 
@@ -425,8 +424,14 @@ router.put('/students/:id', async (req, res) => {
             return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
         }
 
+        console.log("Đang xử lý cập nhật trạng thái...");
+        console.log("Trạng thái hiện tại của sinh viên:", existingStudent.status);
+        console.log("Trạng thái mới:", status);
+        console.log("Quy tắc trạng thái từ config:", statusRules);
+        console.log("Các trạng thái có thể chuyển từ", existingStudent.status, ":", statusRules[existingStudent.status]);
+
         // Kiểm tra xem trạng thái mới có hợp lệ không
-        const allowedNextStatuses = statusRules[existingStudent.status] || [];
+        const allowedNextStatuses = statusRules.get(existingStudent.status) || [];
         if (!allowedNextStatuses.includes(status)) {
             return res.status(400).json({ error: `Không thể đổi từ "${existingStudent.status}" sang "${status}"!` });
         }
