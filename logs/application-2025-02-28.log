@@ -84,3 +84,9 @@
 [2025-02-28 19:19:04] INFO: Yêu cầu cập nhật sinh viên có ID: 67c1a9b877b67537f0bf6b40
 [2025-02-28 19:19:04] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c1a9b877b67537f0bf6b40)
 [2025-02-28 19:19:04] INFO: Xóa sinh viên có ID: 67c1a9b877b67537f0bf6b45
+[2025-02-28 21:23:54] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 21:23:54] INFO: Thêm sinh viên mới: Nguyễn Văn A (MSSV: SV001)
+[2025-02-28 21:23:54] ERROR: Lỗi khi thêm sinh viên: E11000 duplicate key error collection: test.students index: studentId_1 dup key: { studentId: "SV004" }
+[2025-02-28 21:23:54] INFO: Yêu cầu cập nhật sinh viên có ID: 67c1c6fac9cfecd271ed18ee
+[2025-02-28 21:23:54] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c1c6fac9cfecd271ed18ee)
+[2025-02-28 21:23:54] INFO: Xóa sinh viên có ID: 67c1c6fac9cfecd271ed18f3
