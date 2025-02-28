@@ -1,0 +1,80 @@
+[2025-02-28 17:24:13] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 17:24:13] INFO: Yêu cầu cập nhật sinh viên có ID: 67c18ecd6d9baf9ecadecc5c
+[2025-02-28 17:24:13] ERROR: Lỗi khi cập nhật sinh viên có ID 67c18ecd6d9baf9ecadecc5c: Cannot read properties of undefined (reading 'split')
+[2025-02-28 17:24:13] INFO: Xóa sinh viên có ID: 67c18ecd6d9baf9ecadecc62
+[2025-02-28 17:35:21] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 17:35:21] INFO: Yêu cầu cập nhật sinh viên có ID: 67c191693a030fb625700a19
+[2025-02-28 17:35:21] ERROR: Lỗi khi cập nhật sinh viên có ID 67c191693a030fb625700a19: Cannot read properties of undefined (reading 'split')
+[2025-02-28 17:35:21] INFO: Xóa sinh viên có ID: 67c191693a030fb625700a1d
+[2025-02-28 17:41:50] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 17:41:50] INFO: Yêu cầu cập nhật sinh viên có ID: 67c192eeb33ba47d2241662e
+[2025-02-28 17:41:50] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c192eeb33ba47d2241662e)
+[2025-02-28 17:41:50] INFO: Xóa sinh viên có ID: 67c192eeb33ba47d22416633
+[2025-02-28 17:46:56] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 17:46:56] INFO: Yêu cầu cập nhật sinh viên có ID: 67c1942091e0688c1375e764
+[2025-02-28 17:46:56] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c1942091e0688c1375e764)
+[2025-02-28 17:46:56] INFO: Xóa sinh viên có ID: 67c1942091e0688c1375e769
+[2025-02-28 17:50:27] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 17:50:54] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 17:50:54] INFO: Yêu cầu cập nhật sinh viên có ID: 67c1950e11aaaba3b7bc2dab
+[2025-02-28 17:50:54] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c1950e11aaaba3b7bc2dab)
+[2025-02-28 17:50:54] INFO: Xóa sinh viên có ID: 67c1950e11aaaba3b7bc2db0
+[2025-02-28 17:52:20] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 17:52:20] INFO: Yêu cầu cập nhật sinh viên có ID: 67c19564dd08cdccebf895ed
+[2025-02-28 17:52:20] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c19564dd08cdccebf895ed)
+[2025-02-28 17:52:20] INFO: Xóa sinh viên có ID: 67c19564dd08cdccebf895f2
+[2025-02-28 17:58:57] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 17:58:57] INFO: Yêu cầu cập nhật sinh viên có ID: 67c196f112fdfc4ff3391884
+[2025-02-28 17:58:57] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c196f112fdfc4ff3391884)
+[2025-02-28 17:58:57] INFO: Xóa sinh viên có ID: 67c196f112fdfc4ff3391889
+[2025-02-28 18:01:11] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:01:11] INFO: Yêu cầu cập nhật sinh viên có ID: 67c19777ecd263dc32e88423
+[2025-02-28 18:01:11] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c19777ecd263dc32e88423)
+[2025-02-28 18:01:11] INFO: Xóa sinh viên có ID: 67c19777ecd263dc32e88428
+[2025-02-28 18:03:18] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:03:18] INFO: Yêu cầu cập nhật sinh viên có ID: 67c197f655d0bbe6f01145c9
+[2025-02-28 18:03:18] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c197f655d0bbe6f01145c9)
+[2025-02-28 18:03:18] INFO: Xóa sinh viên có ID: 67c197f655d0bbe6f01145ce
+[2025-02-28 18:04:59] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:04:59] INFO: Yêu cầu cập nhật sinh viên có ID: 67c1985b3346c8b8b522fb43
+[2025-02-28 18:04:59] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c1985b3346c8b8b522fb43)
+[2025-02-28 18:04:59] INFO: Xóa sinh viên có ID: 67c1985b3346c8b8b522fb48
+[2025-02-28 18:06:36] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:06:36] INFO: Yêu cầu cập nhật sinh viên có ID: 67c198bc8b0161c11f601564
+[2025-02-28 18:06:36] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c198bc8b0161c11f601564)
+[2025-02-28 18:06:36] INFO: Xóa sinh viên có ID: 67c198bc8b0161c11f60156a
+[2025-02-28 18:20:59] INFO: Lấy thông tin version: {"version":"1.0.0","build_date":"2025-02-28"}
+[2025-02-28 18:20:59] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:20:59] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:22:03] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:22:22] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:22:32] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:22:32] INFO: Thêm sinh viên mới: Trần Đức Tùng (MSSV: 22127477)
+[2025-02-28 18:22:34] INFO: Lấy thông tin version: {"version":"1.0.0","build_date":"2025-02-28"}
+[2025-02-28 18:22:34] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:22:34] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:22:37] INFO: Xóa sinh viên có ID: 67c19c78c3bf86b8a45fcfa4
+[2025-02-28 18:22:39] INFO: Lấy thông tin version: {"version":"1.0.0","build_date":"2025-02-28"}
+[2025-02-28 18:22:39] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:22:39] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:24:30] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:24:30] INFO: Yêu cầu cập nhật sinh viên có ID: 67c19cee40fd44e22a3c546e
+[2025-02-28 18:24:30] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c19cee40fd44e22a3c546e)
+[2025-02-28 18:24:30] INFO: Xóa sinh viên có ID: 67c19cee40fd44e22a3c5474
+[2025-02-28 18:29:17] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:29:17] INFO: Yêu cầu cập nhật sinh viên có ID: 67c19e0d6b47d5fa7d405f9f
+[2025-02-28 18:29:17] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c19e0d6b47d5fa7d405f9f)
+[2025-02-28 18:29:17] INFO: Xóa sinh viên có ID: 67c19e0d6b47d5fa7d405fa4
+[2025-02-28 18:29:38] INFO: Lấy thông tin version: {"version":"1.0.0","build_date":"2025-02-28"}
+[2025-02-28 18:29:38] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:29:39] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:42:17] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:42:17] INFO: Yêu cầu cập nhật sinh viên có ID: 67c1a11971ffbba03fbed410
+[2025-02-28 18:42:17] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c1a11971ffbba03fbed410)
+[2025-02-28 18:42:17] INFO: Xóa sinh viên có ID: 67c1a11971ffbba03fbed415
+[2025-02-28 18:52:48] INFO: Lấy danh sách sinh viên thành công.
+[2025-02-28 18:52:48] INFO: Thêm sinh viên mới: Nguyễn Văn A (MSSV: SV001)
+[2025-02-28 18:52:48] ERROR: Lỗi khi thêm sinh viên: E11000 duplicate key error collection: test.students index: studentId_1 dup key: { studentId: "SV004" }
+[2025-02-28 18:52:48] INFO: Yêu cầu cập nhật sinh viên có ID: 67c1a390ef0134f2bc1e34ec
+[2025-02-28 18:52:48] INFO: Cập nhật thành công sinh viên: Lê Bảo B (ID: 67c1a390ef0134f2bc1e34ec)
+[2025-02-28 18:52:48] INFO: Xóa sinh viên có ID: 67c1a390ef0134f2bc1e34f1
