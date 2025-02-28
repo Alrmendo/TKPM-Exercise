@@ -354,26 +354,33 @@ router.post('/students', async (req, res) => {
     try {
         const { email, phone } = req.body;
 
-        // Lấy danh sách domain hợp lệ từ cấu hình
+        // Lấy danh sách domain email hợp lệ và mã quốc gia hợp lệ từ Config
         let config = await Config.findOne();
         const allowedDomains = config?.allowedEmailDomains || [];
         const allowedPhoneCodes = config?.phoneCountryCodes || [];
 
-        // Kiểm tra email có đúng domain không
-        const emailDomain = email.split('@').pop();
-        if (!allowedDomains.includes(emailDomain)) {
-            return res.status(400).json({ error: "Email phải thuộc tên miền hợp lệ!" });
+        // Kiểm tra email có hợp lệ không
+        if (email) {
+            const emailDomain = email.split('@').pop();
+            if (!allowedDomains.includes(emailDomain)) {
+                return res.status(400).json({ error: `Email phải thuộc tên miền hợp lệ: ${allowedDomains.join(', ')}` });
+            }
         }
 
-        // Kiểm tra số điện thoại hợp lệ
-        if (!allowedPhoneCodes.some(code => phone.startsWith(code))) {
-            return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
+        // Kiểm tra số điện thoại có hợp lệ không
+        if (phone) {
+            if (!allowedPhoneCodes.some(code => phone.startsWith(code))) {
+                return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
+            }
         }
 
+        // Thêm sinh viên mới vào database
         const student = new Student(req.body);
         await student.save();
         logger.info(`Thêm sinh viên mới: ${student.name} (MSSV: ${student.studentId})`);
+
         res.status(201).json({ message: 'Sinh viên đã được thêm!', student });
+
     } catch (err) {
         logger.error(`Lỗi khi thêm sinh viên: ${err.message}`);
         res.status(400).json({ error: err.message });
@@ -407,21 +414,25 @@ router.put('/students/:id', async (req, res) => {
             return res.status(404).json({ error: 'Không tìm thấy sinh viên!' });
         }
 
-        // Lấy danh sách domain hợp lệ
+        // Lấy danh sách domain email hợp lệ và mã quốc gia hợp lệ từ Config
         let config = await Config.findOne();
         const allowedDomains = config?.allowedEmailDomains || [];
         const allowedPhoneCodes = config?.phoneCountryCodes || [];
         const statusRules = config?.statusRules || {};
 
-        // Kiểm tra email có đúng domain không
-        const emailDomain = email.split('@').pop();
-        if (!allowedDomains.includes(emailDomain)) {
-            return res.status(400).json({ error: `Email phải thuộc tên miền hợp lệ: ${allowedDomains.join(', ')}` });
+        // Kiểm tra email có đúng domain hợp lệ không
+        if (email) {
+            const emailDomain = email.split('@').pop();
+            if (!allowedDomains.includes(emailDomain)) {
+                return res.status(400).json({ error: `Email phải thuộc tên miền hợp lệ: ${allowedDomains.join(', ')}` });
+            }
         }
 
-        // Kiểm tra số điện thoại hợp lệ
-        if (!allowedPhoneCodes.some(code => phone.startsWith(code))) {
-            return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
+        // Kiểm tra số điện thoại có đúng mã quốc gia không
+        if (phone) {
+            if (!allowedPhoneCodes.some(code => phone.startsWith(code))) {
+                return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
+            }
         }
 
         console.log("Đang xử lý cập nhật trạng thái...");
@@ -431,9 +442,11 @@ router.put('/students/:id', async (req, res) => {
         console.log("Các trạng thái có thể chuyển từ", existingStudent.status, ":", statusRules[existingStudent.status]);
 
         // Kiểm tra xem trạng thái mới có hợp lệ không
-        const allowedNextStatuses = statusRules.get(existingStudent.status) || [];
-        if (!allowedNextStatuses.includes(status)) {
-            return res.status(400).json({ error: `Không thể đổi từ "${existingStudent.status}" sang "${status}"!` });
+        if (status && statusRules[existingStudent.status]) {
+            const allowedNextStatuses = statusRules[existingStudent.status];
+            if (!allowedNextStatuses.includes(status)) {
+                return res.status(400).json({ error: `Không thể đổi từ "${existingStudent.status}" sang "${status}"!` });
+            }
         }
 
         // Cập nhật thông tin sinh viên

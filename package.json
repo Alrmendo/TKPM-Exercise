@@ -9,7 +9,7 @@
     "dev": "node buildDate.js && nodemon index.js",
     "prestart": "node buildDate.js",
     "preinstall": "node buildDate.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "dependencies": {
     "cloudinary": "^2.5.1",
@@ -17,13 +17,16 @@
     "exceljs": "^4.4.0",
     "express": "^4.21.2",
     "express-handlebars": "^8.0.1",
-    "mongoose": "^8.10.1",
     "multer": "^1.4.5-lts.1",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^10.1.4",
+    "mongoose": "^8.11.0",
+    "nodemon": "^3.1.9",
+    "supertest": "^7.0.0"
   },
-  "build_date": "2025-02-27"
+  "build_date": "2025-02-28"
 }
