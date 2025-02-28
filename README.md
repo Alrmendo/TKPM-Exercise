@@ -1,7 +1,7 @@
 # TKPM-EXERCISE
 
 # NOTE:
-- Do em tải file zip của project về và làm trên đó (xong em mới để qua file clone và commit lên) nên sẽ có vài file không giống như trong ảnh do em chụp bên file zip em download về. Em cảm ơn thầy ạ. 
+- Tính năng **"Tình trạng sinh viên chỉ có thể thay đổi theo một số quy tắc"** vẫn còn lỗi nhỏ, mặc dù đã có thể configurable nhưng việc update nhưng lúc chỉnh sửa trong edit model vẫn còn bug.
 
 # Mục lục
 
