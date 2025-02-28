@@ -1,23 +1,19 @@
 # TKPM-EXERCISE
 
 # NOTE:
-- Do lúc làm bài, em tải file zip của project về và làm trên đó (xong em mới để qua file clone và commit lên) nên sẽ có vài file (ví dụ như Log) dữ liệu ghi ra không giống như trong ảnh do em chụp bên file zip em download về ạ. Em xin cảm ơn thầy. 
+- Do em tải file zip của project về và làm trên đó (xong em mới để qua file clone và commit lên) nên sẽ có vài file không giống như trong ảnh do em chụp bên file zip em download về. Em cảm ơn thầy ạ. 
 
 # Mục lục
 
 1. [Chạy bằng link web](#1-chạy-bằng-link-web)  
-2. [Cập nhật trong Version 2.0](#2-cập-nhật-trong-version-20)  
-   - [2.1. Các tính năng mới](#21-các-tính-năng-mới)  
-   - [2.2. Hình ảnh minh chứng các tính năng mới](#22-hình-ảnh-minh-chứng-các-tính-năng-mới)  
-     - [Kết nối cơ sở dữ liệu](#kết-nối-cơ-sở-dữ-liệu)  
-     - [Quản lý khoa](#quản-lý-khoa)  
-     - [Quản lý chương trình học](#quản-lý-chương-trình-học)  
-     - [Quản lý trạng thái sinh viên](#quản-lý-trạng-thái-sinh-viên)  
-     - [Xuất/Nhập dữ liệu](#xuấtnhập-dữ-liệu)  
-     - [Cơ chế ghi log](#cơ-chế-ghi-log)  
-     - [Tìm kiếm nâng cao](#tìm-kiếm-nâng-cao)  
-     - [Đồng bộ dữ liệu](#đồng-bộ-dữ-liệu)  
-     - [Xây dựng thông tin phiên bản](#xây-dựng-thông-tin-phiên-bản)  
+2. [Cập nhật trong Version 3.0](#2-cập-nhật-trong-version-30)  
+   - [2.1. MSSV phải là duy nhất](#21-mssv-phải-là-duy-nhất)  
+   - [2.2. Email phải thuộc một tên miền nhất định (configurable)](#22-email-phải-thuộc-một-tên-miền-nhất-định-configurable)  
+   - [2.3. Số điện thoại phải có định dạng hợp lệ theo quốc gia (configurable)](#23-số-điện-thoại-phải-có-định-dạng-hợp-lệ-theo-quốc-gia-configurable)  
+   - [2.4. Tình trạng sinh viên chỉ có thể thay đổi theo một số quy tắc (configurable)](#24-tình-trạng-sinh-viên-chỉ-có-thể-thay-đổi-theo-một-số-quy-tắc-configurable)  
+   - [2.5. Kiểm tra email hợp lệ khi nhập liệu](#25-kiểm-tra-email-hợp-lệ-khi-nhập-liệu)  
+   - [2.6. Kiểm tra số điện thoại hợp lệ khi nhập liệu](#26-kiểm-tra-số-điện-thoại-hợp-lệ-khi-nhập-liệu)  
+   - [2.7. Unit Test cho các chức năng mới](#27-unit-test-cho-các-chức-năng-mới)  
 3. [Hướng dẫn cài đặt và chạy chương trình trên máy](#3-hướng-dẫn-cài-đặt-và-chạy-chương-trình-trên-máy)  
    - [3.1. Cấu trúc mã nguồn](#31-cấu-trúc-mã-nguồn)  
    - [3.2. Cài đặt và chạy ứng dụng](#32-cài-đặt-và-chạy-ứng-dụng)  
@@ -32,6 +28,10 @@
    - [Bước 3: Cài đặt dependencies](#bước-3-cài-đặt-dependencies-1)  
    - [Bước 4: Chạy server](#bước-4-chạy-server-1)  
    - [Bước 5: Truy cập web](#bước-5-truy-cập-web-1)  
+5. [Hướng dẫn chạy Unit Test](#5-hướng-dẫn-chạy-unit-test)  
+   - [5.1. Cài đặt dependencies](#51-cài-đặt-dependencies)  
+   - [5.2. Chạy Unit Test](#52-chạy-unit-test)  
+   - [5.3. Kiểm tra kết quả](#53-kiểm-tra-kết-quả)  
 
 ---
 
@@ -44,121 +44,66 @@ Dạ do web em deploy bằng một nền tảng miễn phí (Render). Do đó, t
 
 ---
 
-## 2. Cập nhật trong Version 2.0
+## 2. Cập nhật trong Version 3.0
 
-### 2.1. Các tính năng mới
+#### 01. MSSV phải là duy nhất  
+- Khi thêm hoặc cập nhật sinh viên, không được trùng MSSV với sinh viên khác.  
+- Nếu MSSV bị trùng, hệ thống sẽ hiển thị cảnh báo.  
 
-Version 2.0 bổ sung nhiều tính năng quan trọng giúp cải thiện hiệu suất và trải nghiệm người dùng:
-
-- **Kết nối cơ sở dữ liệu (DB Connection)**: Quản lý cấu hình và thông tin sinh viên.
-- **Quản lý phòng ban (Department Management)**: Thêm, chỉnh sửa, xóa phòng ban.
-- **Quản lý chương trình học (Program Management)**: Thêm, chỉnh sửa, xóa chương trình học.
-- **Quản lý trạng thái sinh viên (Student Status Management)**: Thêm, chỉnh sửa, xóa trạng thái sinh viên.
-- **Xuất/Nhập dữ liệu (Import/Export)**: Chọn file nhập, xuất file dữ liệu.
-- **Cơ chế ghi log (Logging Mechanism)**: Ghi nhận lỗi, kiểm tra file log.
-- **Tìm kiếm nâng cao (Search Function)**: Tìm kiếm theo phòng ban và tên.
-- **Đồng bộ dữ liệu (Sync DB Data to Edit Model)**: Đồng bộ dữ liệu chương trình học, phòng ban.
-- **Xây dựng thông tin phiên bản (Version Build Date)**: Hiển thị thông tin phiên bản trong file log và giao diện.
+📌 **Minh chứng:**  
+![duplicate_mssv.png](./screenshots/version3.0/duplicate_mssv.png)  
 
 ---
 
-### 2.2. Hình ảnh minh chứng các tính năng mới
+#### 02. Email phải thuộc một tên miền nhất định và có thể cấu hình động (configurable)  
+- Ví dụ: Chỉ chấp nhận email có đuôi `@student.university.edu.vn`.  
+- Nếu nhập email không đúng định dạng, hệ thống sẽ hiển thị cảnh báo.  
 
-#### **1. Kết nối cơ sở dữ liệu**
-- **Cấu hình cơ sở dữ liệu**:
-  ![db_config](screenshots/version2.0/db_connection/db_config.png)
-  
-- **Thông tin sinh viên**:
-  ![db_student](screenshots/version2.0/db_connection/db_student.png)
+📌 **Minh chứng:**  
+![email_configuration.png](./screenshots/version3.0/email_configuration.png)  
 
-#### **2. Quản lý khoa**
-- **Thêm khoa**:
-  ![add_department](screenshots/version2.0/department/add_new_department.png)
-  
-- **Sửa khoa**:
-  ![edit_department](screenshots/version2.0/department/edit_department.png)
-  
-- **Xóa khoa**:
-  ![delete_department](screenshots/version2.0/department/delete_department.png)
+---
 
-#### **3. Quản lý chương trình học**
-- **Thêm chương trình**:
-  ![add_new_program](screenshots/version2.0/program/add_new_program.png)
+#### 03. Số điện thoại phải có định dạng hợp lệ theo quốc gia (configurable)  
+- Ví dụ: Việt Nam (`+84` hoặc `0[3|5|7|8|9]xxxxxxxx`).  
+- Nếu số điện thoại không đúng định dạng, hệ thống sẽ báo lỗi.  
 
-- **Sửa chương trình**:
-  ![edit_program](screenshots/version2.0/program/edit_program.png)
+📌 **Minh chứng:**  
+![phone_configuration.png](./screenshots/version3.0/phone_configuration.png)  
 
-- **Xoá chương trình**
-  ![delete_program](screenshots/version2.0/program/delete_program.png)
+---
 
-#### **4. Quản lý trạng thái sinh viên**
-- **Thêm trạng thái sinh viên**:
-  ![add_new_student_status](screenshots/version2.0/student_status/add_new_student_status.png)
+#### 04. Tình trạng sinh viên chỉ có thể thay đổi theo một số quy tắc (configurable)  
+- Ví dụ:  
+  - `"Đang học"` → `"Bảo lưu"`, `"Tốt nghiệp"`, `"Đình chỉ"` (hợp lệ).  
+  - `"Đã tốt nghiệp"` không thể quay lại `"Đang học"`.  
 
-- **Sửa trạng thái sinh viên**:
-  ![edit_student_status](screenshots/version2.0/student_status/edit_student_status.png)
+📌 **Minh chứng:**  
+![status_configuration.png](./screenshots/version3.0/status_configuration.png)  
 
-- **Xoá trạng thái sinh viên**:
-  ![delete_student_status](screenshots/version2.0/student_status/delete_student_status.png)
+---
 
-#### **5. Xuất/Nhập dữ liệu**
-- **Giao diện xuất/nhập**:
-  ![interface](screenshots/version2.0/import_export/interface.png)
+#### 05. Kiểm tra email hợp lệ khi nhập liệu  
+- Hệ thống kiểm tra và xác nhận email theo cấu hình cho phép.  
 
-- **Chọn file nhập**:
-  ![choose_file_to_import](screenshots/version2.0/import_export/choose_file_to_import.png)
-  
-- **Xuất dữ liệu**:
-  ![export](screenshots/version2.0/import_export/export.png)
-  
-- **Kiểm tra file xuất**:
-  ![file_when_done_export](screenshots/version2.0/import_export/file_when_done_export.png)
+📌 **Minh chứng:**  
+![test_email_configuration.png](./screenshots/version3.0/test_email_configuration.png)  
 
-- **Import dữ liệu**:
-  ![import](screenshots/version2.0/import_export/import.png)
+---
 
-#### **6. Cơ chế ghi log**
-- **Ghi log dưới dạng JSON**:
-  ![audit_json](screenshots/version2.0/logging_mechanism/audit_json_file.png)
-  
-- **Kiểm tra lỗi**:
-  ![error_log](screenshots/version2.0/logging_mechanism/error_log_file.png)
+#### 06. Kiểm tra số điện thoại hợp lệ khi nhập liệu  
+- Hệ thống xác minh định dạng số điện thoại theo quy định.  
 
-- **Thư mục log**:
-  ![logs_folder](screenshots/version2.0/logging_mechanism/logs_folder.png)
+📌 **Minh chứng:**  
+![test_phone_configuration.png](./screenshots/version3.0/test_phone_configuration.png)  
 
-- **Log ngày 1**:
-  ![logs_day1](screenshots/version2.0/logging_mechanism/example_application_log_file_day1.png)
+---
 
-- **Log ngày 2**:
-  ![logs_day2](screenshots/version2.0/logging_mechanism/example_application_log_file_day2.png)
+#### 07. Unit Test cho các chức năng mới  
+- Thực hiện kiểm thử tự động để đảm bảo các tính năng hoạt động chính xác.  
 
-#### **7. Tìm kiếm nâng cao**
-- **Tìm kiếm theo phòng ban**:
-  ![search_by_department](screenshots/version2.0/search_function/search_by_department.png)
-
-- **Tìm kiếm theo phòng ban và tên**:
-  ![search_by_department_and_name](screenshots/version2.0/search_function/search_by_department_and_name.png)
-
-#### **8. Đồng bộ dữ liệu**
-- **Đồng bộ Khoa**:
-  ![sync_department_db](screenshots/version2.0/sync_db_data_to_edit_model/sync_department_db.png)
-
-- **Đồng bộ Chương trình**:
-  ![sync_program_db](screenshots/version2.0/sync_db_data_to_edit_model/sync_program_db.png)
-
-- **Đồng bộ Tình trạng sinh viên**:
-  ![sync_status_db](screenshots/version2.0/sync_db_data_to_edit_model/sync_student_status_db.png)
-
-#### **9. Xây dựng thông tin phiên bản**
-- **Giao diện phiên bản và ngày build**:
-  ![version_buildDate_interface](screenshots/version2.0/version_buildDate/version_buildDate_interface.png)
-
-- **Phiên bản và ngày build trong log**:
-  ![version_buildDate_in_log](screenshots/version2.0/version_buildDate/version_buildDate_in_log.png)
-
-- **Phiên bản và ngày build trong Package.json**:
-  ![version_buildDate_in_JSON](screenshots/version2.0/version_buildDate/buildDate_in_packageJson_file.png)
+📌 **Minh chứng:**  
+![unit_test.png](./screenshots/version3.0/unit_test.png)  
 
 ---
 
@@ -271,3 +216,35 @@ Sau khi server chạy thành công, mở trình duyệt và truy cập:
 ```
 http://localhost:3000
 ```
+
+Dưới đây là phần cập nhật cho README.md, bổ sung hướng dẫn chạy Unit Test:
+
+---
+
+## 5. Hướng dẫn chạy Unit Test  
+
+Để kiểm tra các tính năng trong Version 3.0, hãy chạy Unit Test theo các bước sau:
+
+### **Bước 1: Cài đặt dependencies (nếu chưa có)**  
+Mở terminal/cmd và chạy lệnh:  
+```sh
+npm install
+```
+
+### **Bước 2: Chạy Unit Test**  
+Sau khi cài đặt xong, chạy lệnh sau để thực hiện kiểm thử tự động:  
+```sh
+npm test
+```
+
+Nếu dự án sử dụng một công cụ test cụ thể như **Jest**, **Mocha**, hoặc **Chai**, bạn có thể kiểm tra trong `package.json` để biết lệnh test chính xác. Nếu dùng Jest, có thể chạy:  
+```sh
+npx jest
+```
+
+### **Bước 3: Kiểm tra kết quả**  
+- Nếu tất cả các bài test đều thành công, bạn sẽ thấy thông báo **PASS** trên terminal.  
+- Nếu có lỗi, hệ thống sẽ hiển thị chi tiết về lỗi cần khắc phục.  
+
+📌 **Minh chứng:**  
+![unit_test.png](./screenshots/version3.0/unit_test.png)  
