@@ -1,7 +1,7 @@
 # TKPM-EXERCISE
 
 # NOTE:
-- Tính năng **"Tình trạng sinh viên chỉ có thể thay đổi theo một số quy tắc"** vẫn còn lỗi nhỏ, mặc dù đã có thể configurable nhưng việc update nhưng lúc chỉnh sửa trong edit model vẫn còn bug.
+- Tính năng **"Tình trạng sinh viên chỉ có thể thay đổi theo một số quy tắc"** vẫn còn lỗi nhỏ, mặc dù đã có thể configurable nhưng việc update trong edit model vẫn còn một vài bug.
 
 # Mục lục
 
