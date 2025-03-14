@@ -12,6 +12,7 @@ const studentSchema = new mongoose.Schema({
     course: { type: String },
     program: { type: String },
     address: { type: String },
+    purpose: { type: String, default: "" },
     creationDate: { type: Date, default: Date.now }
 });
 

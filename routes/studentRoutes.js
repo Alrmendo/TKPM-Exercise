@@ -1,3 +1,7 @@
+import { getConfirmationPage } from '../controllers/studentController.js';
+import { updateStudentPurpose } from '../controllers/studentController.js';
+import { getStudentList, getStudentById } from '../controllers/studentController.js';
+import { exportHTML, exportMarkdown, exportPDF } from '../controllers/studentController.js';
 import express from 'express';
 import Student from '../models/Student.js';
 import Config from '../models/Config.js';
@@ -11,10 +15,19 @@ import logger from '../utils/logger.js';
 import fs from 'fs';
 
 const router = express.Router();
+router.get('/confirmation', getConfirmationPage);
+router.get('/confirmation', getStudentList);
+router.get('/api/student/:studentId', getStudentById);
+router.post('/update-purpose', updateStudentPurpose);
+router.get('/export/html', exportHTML);
+router.get('/export/md', exportMarkdown);
+router.get('/export/pdf', exportPDF);
+
 const upload = multer({ dest: 'uploads/' });
 
 // Cấu hình thời gian giới hạn xóa (30 phút)
 const DELETE_TIME_LIMIT = 30 * 60 * 1000;
+
 
 // Import JSON + Logger
 router.post('/import/json', upload.single('file'), async (req, res) => {
