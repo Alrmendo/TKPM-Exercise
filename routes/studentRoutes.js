@@ -501,7 +501,7 @@ router.delete('/students/:id', async (req, res) => {
         const currentTime = Date.now();
         const creationTime = new Date(student.creationDate).getTime();
 
-        // Kiểm tra nếu thời gian tạo cách hiện tại ít hơn DELETE_TIME_LIMIT (30 phút)
+        // Kiểm tra nếu sinh viên đã tồn tại hơn 30 phút
         if (currentTime - creationTime > DELETE_TIME_LIMIT) {
             return res.status(403).json({ error: 'Chỉ có thể xóa sinh viên trong vòng 30 phút sau khi tạo!' });
         }

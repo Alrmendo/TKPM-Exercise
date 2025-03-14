@@ -689,11 +689,16 @@
             if (response.ok) {
                 alert('Xóa sinh viên thành công!');
                 location.reload();
+            } else if (response.status === 403) {
+                alert(result.error);
+            } else if (response.status === 404) {
+                alert("Không tìm thấy sinh viên!");
             } else {
-                alert('Lỗi khi xóa sinh viên!');
+                alert("Lỗi khi xóa sinh viên!");
             }
         } catch (error) {
             console.error("Lỗi khi xóa sinh viên:", error);
+            alert("Lỗi kết nối đến server!");
         }
     }
 
