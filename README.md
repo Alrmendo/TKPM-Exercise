@@ -6,14 +6,12 @@
 # Mục lục
 
 1. [Chạy bằng link web](#1-chạy-bằng-link-web)  
-2. [Cập nhật trong Version 3.0](#2-cập-nhật-trong-version-30)  
-   - [2.1. MSSV phải là duy nhất](#21-mssv-phải-là-duy-nhất)  
-   - [2.2. Email phải thuộc một tên miền nhất định (configurable)](#22-email-phải-thuộc-một-tên-miền-nhất-định-configurable)  
-   - [2.3. Số điện thoại phải có định dạng hợp lệ theo quốc gia (configurable)](#23-số-điện-thoại-phải-có-định-dạng-hợp-lệ-theo-quốc-gia-configurable)  
-   - [2.4. Tình trạng sinh viên chỉ có thể thay đổi theo một số quy tắc (configurable)](#24-tình-trạng-sinh-viên-chỉ-có-thể-thay-đổi-theo-một-số-quy-tắc-configurable)  
-   - [2.5. Kiểm tra email hợp lệ khi nhập liệu](#25-kiểm-tra-email-hợp-lệ-khi-nhập-liệu)  
-   - [2.6. Kiểm tra số điện thoại hợp lệ khi nhập liệu](#26-kiểm-tra-số-điện-thoại-hợp-lệ-khi-nhập-liệu)  
-   - [2.7. Unit Test cho các chức năng mới](#27-unit-test-cho-các-chức-năng-mới)  
+2. [Cập nhật trong Version 4.0](#3-cập-nhật-trong-version-40)  
+   - [2.1. Chỉ được phép xóa sinh viên có creation date/time trong khoảng thời gian nhất định](#21-chỉ-được-phép-xóa-sinh-viên-có-creation-date-time-trong-khoảng-thời-gian-nhất-định)  
+   - [2.2. Cho phép bật / tắt việc áp dụng các quy định](#22-cho-phép-bật-tắt-việc-áp-dụng-các-quy-định)  
+   - [2.3. Các màn hình cần hiện logo hoặc tên Trường](#23-các-màn-hình-cần-hiện-logo-hoặc-tên-trường)  
+   - [2.4. Cho phép xóa khoa, xóa tình trạng sinh viên, xóa chương trình đào tạo nếu không có ràng buộc về dữ liệu](#24-cho-phép-xóa-khoa-xóa-tình-trạng-sinh-viên-xóa-chương-trình-đào-tạo-nếu-không-có-ràng-buộc-về-dữ-liệu)  
+   - [2.5. Xuất giấy xác nhận tình trạng sinh viên ra HTML/MD/PDF/DOCX](#25-xuất-giấy-xác-nhận-tình-trạng-sinh-viên-ra-htmlmdpdfdocx)  
 3. [Hướng dẫn cài đặt và chạy chương trình trên máy](#3-hướng-dẫn-cài-đặt-và-chạy-chương-trình-trên-máy)  
    - [3.1. Cấu trúc mã nguồn](#31-cấu-trúc-mã-nguồn)  
    - [3.2. Cài đặt và chạy ứng dụng](#32-cài-đặt-và-chạy-ứng-dụng)  
@@ -44,66 +42,51 @@ Dạ do web em deploy bằng một nền tảng miễn phí (Render). Do đó, t
 
 ---
 
-## 2. Cập nhật trong Version 3.0
+## 2. Cập nhật trong Version 4.0
 
-#### 01. MSSV phải là duy nhất  
-- Khi thêm hoặc cập nhật sinh viên, không được trùng MSSV với sinh viên khác.  
-- Nếu MSSV bị trùng, hệ thống sẽ hiển thị cảnh báo.  
+#### 01. Chỉ được phép xóa sinh viên có creation date/time trong khoảng thời gian nhất định.    
+- Nếu xoá sinh viên có thời gian tạo lớn hơn 30p, hệ thống sẽ hiển thị cảnh báo.  
 
 📌 **Minh chứng:**  
-![duplicate_mssv.png](./screenshots/version3.0/duplicate_mssv.png)  
+![after_30min_delete.png](./screenshots/version4.0/after_30min_delete.png)  
 
 ---
 
-#### 02. Email phải thuộc một tên miền nhất định và có thể cấu hình động (configurable)  
-- Ví dụ: Chỉ chấp nhận email có đuôi `@student.university.edu.vn`.  
-- Nếu nhập email không đúng định dạng, hệ thống sẽ hiển thị cảnh báo.  
+#### 02. Cho phép bật / tắt việc áp dụng các quy định  
+- Nếu tắt kích hoạt các quy định thì khi nhập sai quy định, hệ thống vẫn sẽ không báo lỗi. 
+- Còn khi bật kích hoạt các quy định, nếu nhập sai hệ thống sẽ hiển thị cảnh báo.  
 
 📌 **Minh chứng:**  
-![email_configuration.png](./screenshots/version3.0/email_configuration.png)  
+![turn_off_rule.png](./screenshots/version4.0/turn_off_rule.png)
+![turn_on_rule.png](./screenshots/version4.0/turn_on_rule.png)
 
 ---
 
-#### 03. Số điện thoại phải có định dạng hợp lệ theo quốc gia (configurable)  
-- Ví dụ: Việt Nam (`+84` hoặc `0[3|5|7|8|9]xxxxxxxx`).  
-- Nếu số điện thoại không đúng định dạng, hệ thống sẽ báo lỗi.  
+#### 03. Các màn hình cần hiện logo hoặc tên Trường (ít nhất một)  
+- Hiển thị logo cũng như tên trường trên header - navbar.  
 
 📌 **Minh chứng:**  
-![phone_configuration.png](./screenshots/version3.0/phone_configuration.png)  
+![logo_school.png](./screenshots/version4.0/logo_school.png)  
 
 ---
 
-#### 04. Tình trạng sinh viên chỉ có thể thay đổi theo một số quy tắc (configurable)  
-- Ví dụ:  
-  - `"Đang học"` → `"Bảo lưu"`, `"Tốt nghiệp"`, `"Đình chỉ"` (hợp lệ).  
-  - `"Đã tốt nghiệp"` không thể quay lại `"Đang học"`.  
+#### 04. Cho phép xóa khoa, xóa tình trạng sinh viên, xóa chương trình đào tạo nếu không có ràng buộc về dữ liệu  
+- Chọn khoa, tình trạng hoặc chương trình đạo tạo muốn xoá.
+- Nhấp vào biểu tượng xoá, hệ thống sẽ thông báo đã xoá thành công trường tương ứng.
 
 📌 **Minh chứng:**  
-![status_configuration.png](./screenshots/version3.0/status_configuration.png)  
+![delete_department.png](./screenshots/version2.0/department/delete_department.png)  
+![delete_program.png](./screenshots/version2.0/program/delete_program.png)
+![delete_program.png](./screenshots/version2.0/student_status/delete_student_status.png)
 
 ---
 
-#### 05. Kiểm tra email hợp lệ khi nhập liệu  
-- Hệ thống kiểm tra và xác nhận email theo cấu hình cho phép.  
+#### 05. Xuất giấy xác nhận tình trạng sinh viên ra **HTML/MD/PDF/DOCX** (ít nhất 2 định dạng)
+- Chọn sinh viên muốn xuất "giấy xác nhận tình trạng sinh viên"
+- Sau đó chọn trong các options xuất như: HTML/MD/PDF
 
 📌 **Minh chứng:**  
-![test_email_configuration.png](./screenshots/version3.0/test_email_configuration.png)  
-
----
-
-#### 06. Kiểm tra số điện thoại hợp lệ khi nhập liệu  
-- Hệ thống xác minh định dạng số điện thoại theo quy định.  
-
-📌 **Minh chứng:**  
-![test_phone_configuration.png](./screenshots/version3.0/test_phone_configuration.png)  
-
----
-
-#### 07. Unit Test cho các chức năng mới  
-- Thực hiện kiểm thử tự động để đảm bảo các tính năng hoạt động chính xác.  
-
-📌 **Minh chứng:**  
-![unit_test.png](./screenshots/version3.0/unit_test.png)  
+![export_student_cert.png](./screenshots/version4.0/export_student_cert.png)  
 
 ---
 
