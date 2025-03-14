@@ -1,6 +1,6 @@
 {
   "name": "tkpm-exercise",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -28,5 +28,5 @@
     "nodemon": "^3.1.9",
     "supertest": "^7.0.0"
   },
-  "build_date": "2025-02-28"
+  "build_date": "2025-03-14"
 }
