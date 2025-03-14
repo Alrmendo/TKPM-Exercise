@@ -2,34 +2,35 @@
 
 # NOTE:
 - Tính năng **"Tình trạng sinh viên chỉ có thể thay đổi theo một số quy tắc"** vẫn còn lỗi nhỏ, mặc dù đã có thể configurable nhưng việc update trong edit model vẫn còn một vài bug.
+- Mặc dù code vẫn chạy bình thường nhưng source code còn khó đọc, chưa xác định hay sửa những chổ vi phạm SRP và DRY principle.
 
 # Mục lục
 
 1. [Chạy bằng link web](#1-chạy-bằng-link-web)  
-2. [Cập nhật trong Version 4.0](#3-cập-nhật-trong-version-40)  
-   - [2.1. Chỉ được phép xóa sinh viên có creation date/time trong khoảng thời gian nhất định](#21-chỉ-được-phép-xóa-sinh-viên-có-creation-date-time-trong-khoảng-thời-gian-nhất-định)  
-   - [2.2. Cho phép bật / tắt việc áp dụng các quy định](#22-cho-phép-bật-tắt-việc-áp-dụng-các-quy-định)  
+2. [Cập nhật trong Version 4.0](#2-cập-nhật-trong-version-40)  
+   - [2.1. Chỉ được phép xóa sinh viên có creation date hoặc time trong khoảng thời gian nhất định](#21-chỉ-được-phép-xóa-sinh-viên-có-creation-date-hoặc-time-trong-khoảng-thời-gian-nhất-định)  
+   - [2.2. Cho phép bật tắt việc áp dụng các quy định](#22-cho-phép-bật-tắt-việc-áp-dụng-các-quy-định)  
    - [2.3. Các màn hình cần hiện logo hoặc tên Trường](#23-các-màn-hình-cần-hiện-logo-hoặc-tên-trường)  
    - [2.4. Cho phép xóa khoa, xóa tình trạng sinh viên, xóa chương trình đào tạo nếu không có ràng buộc về dữ liệu](#24-cho-phép-xóa-khoa-xóa-tình-trạng-sinh-viên-xóa-chương-trình-đào-tạo-nếu-không-có-ràng-buộc-về-dữ-liệu)  
-   - [2.5. Xuất giấy xác nhận tình trạng sinh viên ra HTML/MD/PDF/DOCX](#25-xuất-giấy-xác-nhận-tình-trạng-sinh-viên-ra-htmlmdpdfdocx)  
+   - [2.5. Xuất giấy xác nhận tình trạng sinh viên ra các dạng khác nhau](#25-xuất-giấy-xác-nhận-tình-trạng-sinh-viên-ra-các-dạng-khác-nhau)  
 3. [Hướng dẫn cài đặt và chạy chương trình trên máy](#3-hướng-dẫn-cài-đặt-và-chạy-chương-trình-trên-máy)  
    - [3.1. Cấu trúc mã nguồn](#31-cấu-trúc-mã-nguồn)  
    - [3.2. Cài đặt và chạy ứng dụng](#32-cài-đặt-và-chạy-ứng-dụng)  
-     - [Bước 1: Cài đặt Node.js](#bước-1-cài-đặt-nodejs)  
-     - [Bước 2: Clone repository](#bước-2-clone-repository)  
-     - [Bước 3: Cài đặt dependencies](#bước-3-cài-đặt-dependencies)  
-     - [Bước 4: Chạy server](#bước-4-chạy-server)  
-     - [Bước 5: Truy cập web](#bước-5-truy-cập-web)  
+     - [3.2.1. Cài đặt Node.js](#321-cài-đặt-nodejs)  
+     - [3.2.2. Clone repository](#322-clone-repository)  
+     - [3.2.3. Cài đặt dependencies](#323-cài-đặt-dependencies)  
+     - [3.2.4. Chạy server](#324-chạy-server)  
+     - [3.2.5. Truy cập web](#325-truy-cập-web)  
 4. [Chạy từ file ZIP](#4-chạy-từ-file-zip)  
-   - [Bước 1: Giải nén file ZIP](#bước-1-giải-nén-file-zip)  
-   - [Bước 2: Cài đặt Node.js](#bước-2-cài-đặt-nodejs-1)  
-   - [Bước 3: Cài đặt dependencies](#bước-3-cài-đặt-dependencies-1)  
-   - [Bước 4: Chạy server](#bước-4-chạy-server-1)  
-   - [Bước 5: Truy cập web](#bước-5-truy-cập-web-1)  
+   - [4.1. Giải nén file ZIP](#41-giải-nén-file-zip)  
+   - [4.2. Cài đặt Node.js](#42-cài-đặt-nodejs)  
+   - [4.3. Cài đặt dependencies](#43-cài-đặt-dependencies)  
+   - [4.4. Chạy server](#44-chạy-server)  
+   - [4.5. Truy cập web](#45-truy-cập-web)  
 5. [Hướng dẫn chạy Unit Test](#5-hướng-dẫn-chạy-unit-test)  
    - [5.1. Cài đặt dependencies](#51-cài-đặt-dependencies)  
    - [5.2. Chạy Unit Test](#52-chạy-unit-test)  
-   - [5.3. Kiểm tra kết quả](#53-kiểm-tra-kết-quả)  
+   - [5.3. Kiểm tra kết quả](#53-kiểm-tra-kết-quả) 
 
 ---
 
@@ -44,7 +45,7 @@ Dạ do web em deploy bằng một nền tảng miễn phí (Render). Do đó, t
 
 ## 2. Cập nhật trong Version 4.0
 
-#### 01. Chỉ được phép xóa sinh viên có creation date/time trong khoảng thời gian nhất định.    
+#### 2.1. Chỉ được phép xóa sinh viên có creation date hoặc time trong khoảng thời gian nhất định.    
 - Nếu xoá sinh viên có thời gian tạo lớn hơn 30p, hệ thống sẽ hiển thị cảnh báo.  
 
 📌 **Minh chứng:**  
@@ -52,7 +53,7 @@ Dạ do web em deploy bằng một nền tảng miễn phí (Render). Do đó, t
 
 ---
 
-#### 02. Cho phép bật / tắt việc áp dụng các quy định  
+#### 2.2. Cho phép bật tắt việc áp dụng các quy định  
 - Nếu tắt kích hoạt các quy định thì khi nhập sai quy định, hệ thống vẫn sẽ không báo lỗi. 
 - Còn khi bật kích hoạt các quy định, nếu nhập sai hệ thống sẽ hiển thị cảnh báo.  
 
@@ -62,7 +63,7 @@ Dạ do web em deploy bằng một nền tảng miễn phí (Render). Do đó, t
 
 ---
 
-#### 03. Các màn hình cần hiện logo hoặc tên Trường (ít nhất một)  
+#### 2.3. Các màn hình cần hiện logo hoặc tên Trường  
 - Hiển thị logo cũng như tên trường trên header - navbar.  
 
 📌 **Minh chứng:**  
@@ -70,7 +71,7 @@ Dạ do web em deploy bằng một nền tảng miễn phí (Render). Do đó, t
 
 ---
 
-#### 04. Cho phép xóa khoa, xóa tình trạng sinh viên, xóa chương trình đào tạo nếu không có ràng buộc về dữ liệu  
+#### 2.4. Cho phép xóa khoa, xóa tình trạng sinh viên, xóa chương trình đào tạo nếu không có ràng buộc về dữ liệu  
 - Chọn khoa, tình trạng hoặc chương trình đạo tạo muốn xoá.
 - Nhấp vào biểu tượng xoá, hệ thống sẽ thông báo đã xoá thành công trường tương ứng.
 
@@ -81,7 +82,7 @@ Dạ do web em deploy bằng một nền tảng miễn phí (Render). Do đó, t
 
 ---
 
-#### 05. Xuất giấy xác nhận tình trạng sinh viên ra **HTML/MD/PDF/DOCX** (ít nhất 2 định dạng)
+#### 2.5. Xuất giấy xác nhận tình trạng sinh viên ra **Các dạng khác nhau**
 - Chọn sinh viên muốn xuất "giấy xác nhận tình trạng sinh viên"
 - Sau đó chọn trong các options xuất như: HTML/MD/PDF
 
