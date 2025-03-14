@@ -13,7 +13,8 @@ const configSchema = new mongoose.Schema({
             "Đang học": ["Bảo lưu", "Đã tốt nghiệp", "Đình chỉ"],
             "Đã tốt nghiệp": [],
         }
-    }
+    },
+    enableRules: { type: Boolean, default: true }
 });
 
 const Config = mongoose.model('Config', configSchema);

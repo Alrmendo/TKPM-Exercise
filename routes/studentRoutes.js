@@ -360,19 +360,22 @@ router.post('/students', async (req, res) => {
         let config = await Config.findOne();
         const allowedDomains = config?.allowedEmailDomains || [];
         const allowedPhoneCodes = config?.phoneCountryCodes || [];
+        const enableRules = config?.enableRules ?? true;
 
         // Kiểm tra email có hợp lệ không
-        if (email) {
-            const emailDomain = email.split('@').pop();
-            if (!allowedDomains.includes(emailDomain)) {
-                return res.status(400).json({ error: `Email phải thuộc tên miền hợp lệ: ${allowedDomains.join(', ')}` });
+        if (enableRules) {
+            if (email) {
+                const emailDomain = email.split('@').pop();
+                if (!allowedDomains.includes(emailDomain)) {
+                    return res.status(400).json({ error: `Email phải thuộc tên miền hợp lệ: ${allowedDomains.join(', ')}` });
+                }
             }
-        }
 
-        // Kiểm tra số điện thoại có hợp lệ không
-        if (phone) {
-            if (!allowedPhoneCodes.some(code => phone.startsWith(code))) {
-                return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
+            // Kiểm tra số điện thoại có hợp lệ không
+            if (phone) {
+                if (!allowedPhoneCodes.some(code => phone.startsWith(code))) {
+                    return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
+                }
             }
         }
 
@@ -421,33 +424,36 @@ router.put('/students/:id', async (req, res) => {
         const allowedDomains = config?.allowedEmailDomains || [];
         const allowedPhoneCodes = config?.phoneCountryCodes || [];
         const statusRules = config?.statusRules || {};
+        const enableRules = config?.enableRules ?? true;
 
-        // Kiểm tra email có đúng domain hợp lệ không
-        if (email) {
-            const emailDomain = email.split('@').pop();
-            if (!allowedDomains.includes(emailDomain)) {
-                return res.status(400).json({ error: `Email phải thuộc tên miền hợp lệ: ${allowedDomains.join(', ')}` });
+        if (enableRules) {
+            // Kiểm tra email có đúng domain hợp lệ không
+            if (email) {
+                const emailDomain = email.split('@').pop();
+                if (!allowedDomains.includes(emailDomain)) {
+                    return res.status(400).json({ error: `Email phải thuộc tên miền hợp lệ: ${allowedDomains.join(', ')}` });
+                }
             }
-        }
 
-        // Kiểm tra số điện thoại có đúng mã quốc gia không
-        if (phone) {
-            if (!allowedPhoneCodes.some(code => phone.startsWith(code))) {
-                return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
+            // Kiểm tra số điện thoại có đúng mã quốc gia không
+            if (phone) {
+                if (!allowedPhoneCodes.some(code => phone.startsWith(code))) {
+                    return res.status(400).json({ error: `Số điện thoại phải bắt đầu bằng ${allowedPhoneCodes.join(', ')}` });
+                }
             }
-        }
 
-        console.log("Đang xử lý cập nhật trạng thái...");
-        console.log("Trạng thái hiện tại của sinh viên:", existingStudent.status);
-        console.log("Trạng thái mới:", status);
-        console.log("Quy tắc trạng thái từ config:", statusRules);
-        console.log("Các trạng thái có thể chuyển từ", existingStudent.status, ":", statusRules[existingStudent.status]);
+            console.log("Đang xử lý cập nhật trạng thái...");
+            console.log("Trạng thái hiện tại của sinh viên:", existingStudent.status);
+            console.log("Trạng thái mới:", status);
+            console.log("Quy tắc trạng thái từ config:", statusRules);
+            console.log("Các trạng thái có thể chuyển từ", existingStudent.status, ":", statusRules[existingStudent.status]);
 
-        // Kiểm tra xem trạng thái mới có hợp lệ không
-        if (status && statusRules[existingStudent.status]) {
-            const allowedNextStatuses = statusRules[existingStudent.status];
-            if (!allowedNextStatuses.includes(status)) {
-                return res.status(400).json({ error: `Không thể đổi từ "${existingStudent.status}" sang "${status}"!` });
+            // Kiểm tra xem trạng thái mới có hợp lệ không
+            if (status && statusRules[existingStudent.status]) {
+                const allowedNextStatuses = statusRules[existingStudent.status];
+                if (!allowedNextStatuses.includes(status)) {
+                    return res.status(400).json({ error: `Không thể đổi từ "${existingStudent.status}" sang "${status}"!` });
+                }
             }
         }
 
@@ -515,5 +521,25 @@ router.get('/version', (req, res) => {
         res.status(500).json({ error: 'Lỗi khi lấy thông tin phiên bản!' });
     }
 });
+
+//EX4
+router.post('/config/toggle-rules', async (req, res) => {
+    try {
+        const { enableRules } = req.body;
+
+        let config = await Config.findOne();
+        if (!config) {
+            config = new Config({});
+        }
+
+        config.enableRules = enableRules;
+        await config.save();
+
+        res.json({ message: `Quy định đã được ${enableRules ? 'bật' : 'tắt'}!`, enableRules });
+    } catch (err) {
+        res.status(500).json({ error: 'Lỗi khi cập nhật trạng thái quy định!' });
+    }
+});
+
 
 export default router;

@@ -12,6 +12,15 @@
 </section>
 
 <main class="w-[95%] mx-auto px-1 py-6">
+    <!-- Bật/Tắt Quy Định -->
+    <section class="bg-white p-6 rounded shadow-md mb-6">
+        <h2 class="text-lg font-bold mb-4">Bật/Tắt Quy Định</h2>
+        <label class="flex items-center cursor-pointer">
+            <span class="mr-2">Áp dụng quy định:</span>
+            <input type="checkbox" id="toggle-rules" class="toggle-checkbox">
+        </label>
+    </section>
+
     <!-- Import/Export -->
     <section class="bg-white p-6 rounded shadow-md mb-6">
         <h2 class="text-lg font-bold mb-4">Import/Export Dữ Liệu</h2>
@@ -52,6 +61,7 @@
             </button>
         </form>
     </section>
+
 
     <section class="bg-white p-6 rounded shadow-md mb-6">
         <h2 class="text-lg font-bold mb-4">Cấu hình tên miền email hợp lệ</h2>
@@ -584,19 +594,19 @@
         const response = await fetch('/config');
         const config = await response.json();
         const allowedDomains = config.allowedEmailDomains || [];
+        const enableRules = config.enableRules ?? true;
 
-        const emailDomain = email.split('@').pop();
-        if (!allowedDomains.includes(emailDomain)) {
-            alert(`Email phải thuộc các tên miền: ${allowedDomains.join(", ")}`);
-            return;
+        if (enableRules) {
+            const emailDomain = email.split('@').pop();
+            if (!allowedDomains.includes(emailDomain)) {
+                return;
+            }
+
+            if (!(await validatePhoneNumber(phone))) {
+                return;
+            }
         }
 
-        if (!(await validatePhoneNumber(phone))) {
-            alert("Số điện thoại không hợp lệ! Vui lòng nhập số điện thoại bắt đầu bằng mã quốc gia hợp lệ.");
-            return;
-        }
-
-        // Nếu hợp lệ, tiếp tục gửi form
         e.target.submit();
     });
 
@@ -740,17 +750,27 @@
 
         const studentId = document.getElementById('edit-student-db-id').value; // Lấy _id của MongoDB
         const email = document.getElementById('edit-student-email').value.trim();
+        const phone = document.getElementById('edit-student-phone').value.trim();
 
         // Lấy danh sách domain hợp lệ từ server
         try {
             const response = await fetch('/config');
             const config = await response.json();
+            const enableRules = config.enableRules ?? true;
             const allowedDomains = config.allowedEmailDomains || [];
+            const allowedPhoneCodes = config.phoneCountryCodes || [];
             const emailDomain = email.split('@').pop();
 
-            if (!allowedDomains.includes(emailDomain)) {
-                alert(`Email phải thuộc các tên miền hợp lệ: ${allowedDomains.join(", ")}`);
-                return;
+            if (enableRules) {
+                if (!allowedDomains.includes(emailDomain)) {
+                    alert(`Email phải thuộc các tên miền hợp lệ: ${allowedDomains.join(", ")}`);
+                    return;
+                }
+
+                if (!validatePhoneNumber(phone, allowedPhoneCodes)) {
+                    alert(`Số điện thoại không hợp lệ! Phải thuộc một trong các mã: ${allowedPhoneCodes.join(", ")}`);
+                    return;
+                }
             }
         } catch (error) {
             console.error("Lỗi khi lấy danh sách tên miền email:", error);
@@ -1193,4 +1213,23 @@
             stopLoading();
         }
     });
+
+    //EX4
+    async function loadRulesConfig() {
+        const response = await fetch('/config');
+        const config = await response.json();
+        document.getElementById('toggle-rules').checked = config.enableRules;
+    }
+
+    document.getElementById('toggle-rules').addEventListener('change', async function () {
+        const enableRules = this.checked;
+        await fetch('/config/toggle-rules', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enableRules })
+        });
+        alert(`Quy định đã được ${enableRules ? 'bật' : 'tắt'}!`);
+    });
+
+    document.addEventListener('DOMContentLoaded', loadRulesConfig);
 </script>
