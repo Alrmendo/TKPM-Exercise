@@ -667,6 +667,7 @@
 
         try {
             const response = await fetch(`/students/${studentId}`, { method: 'DELETE' });
+            const result = await response.json();
 
             if (response.ok) {
                 alert('Xóa sinh viên thành công!');

@@ -8,11 +8,13 @@ import ExcelJS from 'exceljs';
 import multer from 'multer';
 //Logger
 import logger from '../utils/logger.js';
-
 import fs from 'fs';
 
 const router = express.Router();
 const upload = multer({ dest: 'uploads/' });
+
+// Cấu hình thời gian giới hạn xóa (30 phút)
+const DELETE_TIME_LIMIT = 30 * 60 * 1000;
 
 // Import JSON + Logger
 router.post('/import/json', upload.single('file'), async (req, res) => {
@@ -472,12 +474,26 @@ router.put('/students/:id', async (req, res) => {
 // Xóa sinh viên + Logger
 router.delete('/students/:id', async (req, res) => {
     try {
+        const student = await Student.findById(req.params.id);
+        if (!student) {
+            return res.status(404).json({ error: 'Không tìm thấy sinh viên!' });
+        }
+
+        const currentTime = Date.now();
+        const creationTime = new Date(student.creationDate).getTime();
+
+        // Kiểm tra nếu thời gian tạo cách hiện tại ít hơn DELETE_TIME_LIMIT (30 phút)
+        if (currentTime - creationTime > DELETE_TIME_LIMIT) {
+            return res.status(403).json({ error: 'Chỉ có thể xóa sinh viên trong vòng 30 phút sau khi tạo!' });
+        }
+
         await Student.findByIdAndDelete(req.params.id);
         logger.info(`Xóa sinh viên có ID: ${req.params.id}`);
+
         res.json({ message: 'Sinh viên đã bị xóa!' });
     } catch (err) {
         logger.error(`Lỗi khi xóa sinh viên: ${err.message}`);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: 'Lỗi khi xóa sinh viên!' });
     }
 });
 

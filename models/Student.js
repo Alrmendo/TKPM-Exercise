@@ -11,7 +11,8 @@ const studentSchema = new mongoose.Schema({
     phone: { type: String },
     course: { type: String },
     program: { type: String },
-    address: { type: String }
+    address: { type: String },
+    creationDate: { type: Date, default: Date.now }
 });
 
 const Student = mongoose.model('Student', studentSchema);
